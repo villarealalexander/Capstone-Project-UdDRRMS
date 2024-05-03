@@ -2,10 +2,6 @@
 
 @section('title', 'Confirm Delete')
 
-@section('top-nav-links')
-<a href="{{ route('encoder.index') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Home</a>
-@endsection
-
 @section('content')
     <div class="mx-auto max-w-lg mt-10">
         <header class="text-2xl font-semibold mb-4">
@@ -15,9 +11,9 @@
         <main>
             <form action="{{ route('encoder.destroyMultiple') }}" method="POST">
                 @csrf
-                @foreach($students as $student)
-                    <input type="hidden" name="studentsToDelete[]" value="{{ $student->id }}">
-                    <p>Are you sure you want to delete the folder "{{ $student->name }}"?</p>
+                @foreach($studentIds as $studentId)
+                    <input type="hidden" name="studentsToDelete[]" value="{{ $studentId }}">
+                    <p>Are you sure you want to delete the folder for Student ID: {{ $studentId }}?</p>
                 @endforeach
 
                 <div class="mb-4">
@@ -28,7 +24,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="w-full text-red-500 font-bold py-2 px-4 border-b text-center">Delete Selected Folders</button>
+                <button type="submit" class="w-full text-red-500 font-bold py-2 px-4 border-b text-center">Confirm Delete</button>
             </form>
         </main>
     </div>

@@ -80,6 +80,7 @@ class EncoderController extends Controller
         }
     }
 
+    // Find existing student or create a new one based on name and batch year
     $student = Student::updateOrCreate([
         'name' => $request->input('Name'),
         'batchyear' => $request->input('BatchYear'),
@@ -92,8 +93,19 @@ class EncoderController extends Controller
     if ($request->hasFile('file')) {
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
-            $file->move(public_path('uploads/' . $student->name), $fileName);
 
+            // Create a directory path based on student's ID
+            $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
+
+            // Check if the directory exists, otherwise create it
+            if (!file_exists($studentFolderPath)) {
+                mkdir($studentFolderPath, 0755, true);
+            }
+
+            // Move the uploaded file into the student's directory
+            $file->move($studentFolderPath, $fileName);
+
+            // Save file record in database
             UploadedFile::create([
                 'student_id' => $student->id,
                 'file' => $fileName,
@@ -104,110 +116,124 @@ class EncoderController extends Controller
     return redirect()->route('encoder.index')->with('success', 'Files uploaded successfully.');
 }
 
-    public function studentFiles($name)
-    {
-        $student = Student::where('name', $name)->firstOrFail();
+public function studentFiles($id)
+{
+    $student = Student::findOrFail($id);
+    $user = auth()->user();
 
-        $user = auth()->user();
-
-        if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
-            $files = $student->uploadedFiles;
-            return view('encoder.student_files', compact('files', 'name'));
-        } else {
-            return redirect()->route('home')->with('error', 'Unauthorized access.');
-        }
+    // Check if the user has appropriate role to access student files
+    if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
+        $files = $student->uploadedFiles;
+        return view('encoder.student_files', compact('files', 'student'));
+    } else {
+        return redirect()->route('home')->with('error', 'Unauthorized access.');
     }
+}
 
-    public function viewFile($id)
-    {
-        $file = UploadedFile::findOrFail($id);
+public function viewFile($id)
+{
+    // Find the UploadedFile record by ID
+    $file = UploadedFile::findOrFail($id);
 
-        if (file_exists($file->filePath())) {
-            return response()->file($file->filePath());
-        } else {
-            return back()->with('error', 'File not found.');
-        }
+    // Construct the full file path based on the student's directory and file name
+    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+
+    // Check if the file exists at the specified path
+    if (file_exists($filePath)) {
+        // Serve the file as a response
+        return response()->file($filePath);
+    } else {
+        // If file not found, redirect back with an error message
+        return back()->with('error', 'File not found.');
     }
+}
 
-    public function deleteFile($id)
-    {
-        $file = UploadedFile::findOrFail($id);
+public function deleteFile($id)
+{
+    // Find the UploadedFile record by ID
+    $file = UploadedFile::findOrFail($id);
 
-        if (file_exists($file->filePath())) {
-            unlink($file->filePath());
+    // Construct the full file path based on the student's directory and file name
+    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+
+    // Check if the file exists at the specified path
+    if (file_exists($filePath)) {
+        // Attempt to delete the file from the file system
+        if (unlink($filePath)) {
+            // If file deletion successful, delete the record from the database
+            $file->delete();
+            return redirect()->back()->with('success', 'File deleted successfully.');
+        } else {
+            // If file deletion failed, redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to delete file from the file system.');
         }
-
+    } else {
+        // If file not found at the specified path, delete the record from the database
         $file->delete();
+        return redirect()->back()->with('success', 'File record deleted successfully.');
+    }
+}
 
-        return redirect()->back()->with('success', 'File deleted successfully.');
+public function deleteFolders(Request $request)
+{
+    $foldersToDelete = $request->input('foldersToDelete', []);
+
+    if (empty($foldersToDelete)) {
+        return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
 
-    public function deleteFolders(Request $request)
-    {
-        $foldersToDelete = $request->input('foldersToDelete', []);
+    // Pass the list of student IDs to the confirmation view
+    return view('encoder.confirm-delete', ['studentIds' => $foldersToDelete]);
+}
+public function confirmDelete($id)
+{
+    $student = Student::findOrFail($id);
 
-        if (empty($foldersToDelete)) {
-            return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
-        }
+    return view('encoder.confirm-delete', compact('student'));
+}
 
-        $students = Student::whereIn('name', $foldersToDelete)->get();
+public function destroyMultiple(Request $request)
+{
+    $studentIds = $request->input('studentsToDelete', []);
 
-        foreach ($students as $student) {
-            foreach ($student->uploadedFiles as $file) {
-                if (file_exists($file->filePath())) {
-                    unlink($file->filePath());
-                }
-                $file->delete();
-            }
-            $student->delete();
-        }
-
-        return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
-    }
-        public function confirmDelete($id)
-    {
-        $student = Student::findOrFail($id);
-
-        return view('encoder.confirm-delete', compact('student'));
+    if (empty($studentIds)) {
+        return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
 
-        public function destroyMultiple(Request $request)
-    {
-        $studentIds = $request->input('studentsToDelete', []);
+    $encoderPassword = $request->input('encoder_password');
 
-        if (empty($studentIds)) {
-            return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
-        }
+    // Validate encoder password
+    $validatedData = $request->validate([
+        'encoder_password' => 'required|string',
+    ]);
 
-        $encoderPassword = $request->input('encoder_password');
+    // Check if encoder password matches the authenticated user's password
+    if (!Hash::check($encoderPassword, auth()->user()->password)) {
+        return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
+    }
 
-        $validatedData = $request->validate([
-            'encoder_password' => 'required|string',
-        ]);
+    foreach ($studentIds as $studentId) {
+        $student = Student::findOrFail($studentId);
 
-        if (!Hash::check($encoderPassword, auth()->user()->password)) {
-            return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
-        }
+        // Delete student files (if any)
+        foreach ($student->uploadedFiles as $file) {
+            $filePath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file);
 
-        foreach ($studentIds as $studentId) {
-            $student = Student::findOrFail($studentId);
-
-            foreach ($student->uploadedFiles as $file) {
-                $filePath = public_path('uploads/' . $student->name . '/' . $file->file);
-                if (file_exists($filePath)) {
-                    unlink($filePath); 
-                }
-                $file->delete(); 
+            if (file_exists($filePath)) {
+                unlink($filePath);
             }
 
-            $student->delete();
+            $file->delete();
         }
 
-        // Log activity
-        ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
-
-        return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
+        // Delete the student record
+        $student->delete();
     }
 
+    // Log activity
+    ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
+
+    return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
+}
     
 }

@@ -31,7 +31,7 @@ Route::middleware(['auth', 'CheckRole:superadmin'])->group(function () {
 Route::middleware(['auth', 'CheckRole:admin'])->group(function () {
     Route::get('/admin/activitylogs', [AdminController::class, 'activityLogs'])->name('admin.activitylogs');
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin');
-    Route::get('downloadfile/{id}', [AdminController::class, 'downloadFile'])->name('downloadfile');
+    Route::get('download-file/{id}', [AdminController::class, 'downloadFile'])->name('downloadfile');
 
     Route::resource('admin', AdminController::class)->middleware(['auth', 'verified']);
 });
@@ -41,11 +41,12 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::get('/encoder/index', [EncoderController::class, 'index'])->name('encoder');
     Route::get('/uploadfile', [EncoderController::class, 'create'])->name('uploadfile.create');
     Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
-    Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile');
+    Route::delete('/delete-file/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile');
     Route::get('/encoder/upload', [EncoderController::class, 'uploadfile'])->name('encoder.upload');
     Route::delete('/encoder/delete-folders', [EncoderController::class, 'deleteFolders'])->name('encoder.deleteFolders');
     Route::get('encoder/confirm-delete/{id}', [EncoderController::class, 'confirmDelete'])->name('encoder.confirm-delete');
     Route::post('/encoder/confirm-delete', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
+    
 
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });
@@ -60,8 +61,8 @@ Route::middleware(['auth', 'CheckRole:viewer'])->group(function () {
 
 
 Route::middleware(['auth', 'CheckRole:encoder,viewer,admin'])->group(function () {
-    Route::get('/viewfile/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
-    Route::get('/student/{name}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
+    Route::get('/view-file/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
+    Route::get('/student/{id}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
 });
 
 

@@ -1,0 +1,197 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\ActivityLog;
+use Illuminate\Http\Request;
+use App\Services\ActivityLogService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class SuperadminController extends Controller
+{
+    public function index()
+    {
+
+        $user = auth()->user();
+        $role = $user->role;
+        $name = $user->name;
+
+        ActivityLogService::log('View', 'Viewed the list of users.');
+
+        $users = User::all();
+        return view('superadmin.index', compact('users', 'role', 'name'));
+    }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+
+        ActivityLogService::log('View', 'Viewed a user profile: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')') ;
+        
+        return view('superadmin.show', compact('user'));
+    }
+
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('superadmin.edit', compact('user'));
+    }
+
+    public function create()
+    {
+        return view('superadmin.create');
+    }
+
+
+        public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users|ends_with:cdd.edu.ph',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string|in:admin,viewer,encoder,superadmin',
+            'superadmin_password' => 'required|string',
+        ], [
+            'email.ends_with' => 'The email must end with cdd.edu.ph domain.',
+        ]);
+
+        if (!Hash::check($request->superadmin_password, auth()->user()->password)) {
+            return back()->withErrors(['superadmin_password' => 'Invalid superadmin password']);
+        }
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+
+        ActivityLogService::log('Create', 'Create a user: ' ."Name: " . $request->name . ' (Email: ' . $request->email .') ' . ', ' . ' (Role: '. $request->role . ')');
+
+        return redirect()->back()->with('success', 'User created successfully.');
+    }
+
+
+
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id . '|ends_with:cdd.edu.ph',
+            'password' => 'sometimes|nullable|string|min:8|confirmed',
+            'role' => 'required|string|in:admin,viewer,encoder,superadmin',
+        ], [
+            'email.ends_with' => 'The email must end with cdd.edu.ph domain.',
+        ]);
+
+        $oldData = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ];
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+
+        $passwordChanged = false;
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+            $passwordChanged = true;
+        }
+
+        $user->save();
+
+        $newData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+        ];
+
+        $changes = [];
+        foreach ($oldData as $key => $value) {
+            if ($oldData[$key] != $newData[$key]) {
+                $changes[] = ucfirst($key) . " changed from '$value' to '" . $newData[$key] . "'";
+            }
+        }
+
+        if ($passwordChanged) {
+            $changes[] = "Password changed";
+        }
+
+        if (!empty($changes)) {
+            $changeText = implode(", ", $changes);
+        }
+        ActivityLogService::log('Update', "Updated user profile: {$user->name} (ID: {$user->id}), Changes: $changeText");
+
+        return redirect()->back()->with('success', 'User updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        ActivityLogService::log('Delete', 'Deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
+
+        return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function activityLogs()
+    {
+        $activityLogs = ActivityLog::with('user')->latest()->get();
+
+        ActivityLogService::log('View', 'Viewed Activity Logs');
+
+        return view('superadmin.activitylogs', compact('activityLogs'));
+    }
+
+    public function confirmDelete(Request $request)
+{
+    $selectedUserIds = $request->input('selected_users', []);
+
+    if (empty($selectedUserIds)) {
+        return redirect()->route('superadmin.index')->with('error', 'No users selected for deletion.');
+    }
+
+    return view('superadmin.confirm-delete', [
+        'userIds' => $selectedUserIds
+    ]);
+}
+    
+    public function destroyMultiple(Request $request)
+    {
+        $userIds = $request->input('usersToDelete', []);
+        $superadminPassword = $request->input('superadmin_password');
+    
+        // Validate the superadmin password
+        $validatedData = $request->validate([
+            'superadmin_password' => 'required|string',
+        ]);
+    
+        // Check if the provided password matches the authenticated superadmin's password
+        if (!Hash::check($superadminPassword, auth()->user()->password)) {
+            return redirect()->back()->with('error', 'Incorrect superadmin password.');
+        }
+    
+        // Perform deletion of selected users
+        $deletedUsers = User::whereIn('id', $userIds)->delete();
+    
+        if ($deletedUsers > 0) {
+            // Log activity
+            ActivityLogService::log('Delete users', 'Deleted selected users: ' . implode(', ', $userIds));
+    
+            return redirect()->route('superadmin.index')->with('success', 'Selected users deleted successfully.');
+        } else {
+            return redirect()->route('superadmin.index')->with('error', 'Failed to delete selected users.');
+        }
+    }
+
+    
+}

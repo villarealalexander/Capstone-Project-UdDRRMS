@@ -46,7 +46,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::delete('/encoder/delete-folders', [EncoderController::class, 'deleteFolders'])->name('encoder.deleteFolders');
     Route::get('encoder/confirm-delete/{id}', [EncoderController::class, 'confirmDelete'])->name('encoder.confirm-delete');
     Route::post('/encoder/confirm-delete', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
-    
+    Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
 
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });

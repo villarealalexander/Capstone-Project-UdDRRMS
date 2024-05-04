@@ -116,6 +116,43 @@ class EncoderController extends Controller
     return redirect()->route('encoder.index')->with('success', 'Files uploaded successfully.');
 }
 
+public function addFileToStudent(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'file.*' => 'required|file|max:10240|mimes:pdf', // assuming a max size of 10MB for PDF files
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $student = Student::findOrFail($id); // Ensure the student exists
+
+    if ($request->hasFile('file')) {
+        foreach ($request->file('file') as $file) {
+            $fileName = $file->getClientOriginalName();
+
+        // Create a directory path based on student's ID
+        $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
+
+        // Check if the directory exists, otherwise create it
+        if (!file_exists($studentFolderPath)) {
+            mkdir($studentFolderPath, 0755, true);
+        }
+
+        // Move the uploaded file into the student's directory
+        $file->move($studentFolderPath, $fileName);
+
+        // Save file record in the database
+        UploadedFile::create([
+            'student_id' => $student->id,
+            'file' => $fileName,
+        ]);
+    }
+    }
+    return redirect()->route('student.files', $id)->with('success', 'File uploaded successfully.');
+}
+
 public function studentFiles($id)
 {
     $student = Student::findOrFail($id);

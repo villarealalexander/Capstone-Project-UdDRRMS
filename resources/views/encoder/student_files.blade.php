@@ -6,6 +6,15 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
+        @if (auth()->user()->role === 'encoder')
+            <div class = "flex justify-end items-center">
+        <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
+            <button type="button" id="uploadButton" class="btn btn-primary bg-blue-400 hover:bg-blue-600 py-1 px-2 mb-4 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
+        </form>
+        </div>
+        @endif
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
                     <thead>
@@ -44,4 +53,15 @@
         </div>
     </div>
 </div>
+<script>
+document.getElementById('uploadButton').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function() {
+    if (this.value) {
+        document.getElementById('fileUploadForm').submit();
+    }
+});
+</script>
 @endsection

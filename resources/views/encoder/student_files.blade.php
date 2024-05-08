@@ -2,18 +2,28 @@
 
 @section('title', 'Student Files - ' . $student->name)
 
+@section('top-nav-links')
+@if (auth()->user()->role === 'encoder')
+<a href="{{route('encoder.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+@elseif (auth()->user()->role === 'admin')
+<a href="{{route('admin.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+@elseif (auth()->user()->role === 'viewer')
+<a href="{{route('viewer.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+@endif
+@endsection
+
 @section('content')
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
         @if (auth()->user()->role === 'encoder')
             <div class = "flex justify-end items-center">
-        <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-            <button type="button" id="uploadButton" class="btn btn-primary bg-blue-400 hover:bg-blue-600 py-1 px-2 mb-4 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
-        </form>
-        </div>
+                <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
+                    <button type="button" id="uploadButton" class="btn btn-primary bg-blue-400 hover:bg-blue-600 py-1 px-2 mb-4 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
+                </form>
+            </div>
         @endif
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">

@@ -16,7 +16,7 @@
 @endsection
 
 @section('content')
-    <div class="w-full items-center mx-auto mt-4 lg:w-3/4">
+    <div class="w-full items-center mx-auto mt-4 md:w-[650px] lg:w-3/4">
         <div class="flex justify-end items-center mb-4">
             <a href="{{ route('encoder.upload') }}" class="bg-green-400 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Upload File</a>
             <form id="deleteForm" action="{{ route('encoder.deleteFolders') }}" method="POST">

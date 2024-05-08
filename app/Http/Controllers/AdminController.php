@@ -38,22 +38,22 @@ class AdminController extends Controller
         return view('admin.index', compact('students', 'searchQuery', 'category', 'role', 'name'));
     }
 
-        public function downloadFile($id)
+    public function downloadFile($id)
     {
-
         $file = UploadedFile::findOrFail($id);
         $student = $file->student;
-
-        $filePath = public_path('uploads/' . $file->student->name . '/' . $file->file);
-
+    
+        $filePath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file);
+    
 
         if (file_exists($filePath)) {
             $headers = [
-                'Content-Type' => 'application/' . pathinfo($filePath, PATHINFO_EXTENSION),
+                'Content-Type' => 'application/pdf',
             ];
-
+    
             ActivityLogService::log('Download', 'Download a file from: ' . $student->name .'->'. '(Filename: ' . $file->file. ')');
-
+    
+            // Serve the file to the client
             return response()->download($filePath, $file->file, $headers);
         } else {
             return redirect()->back()->with('error', 'File not found.');

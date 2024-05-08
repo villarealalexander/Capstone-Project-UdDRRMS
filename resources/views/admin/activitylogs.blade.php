@@ -3,7 +3,7 @@
 @section('title', 'Activity Logs')
 
 @section('top-nav-links')
-<a href="{{route('admin.index')}}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Home</a>
+<a href="{{route('admin.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
 @endsection
 
 @section('content')

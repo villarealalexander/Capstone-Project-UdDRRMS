@@ -12,7 +12,7 @@
         <form id="deleteForm" action="{{ route('superadmin.confirm-delete') }}" method="GET">
             @csrf
 
-            <div class="flex justify-start mb-2 mt-2">
+            <div class="flex justify-end mb-2 mt-2">
                 <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete Selected</button>
 
                 @if(session('error'))

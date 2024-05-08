@@ -9,10 +9,6 @@
             <i class="fas fa-search text-black"></i>
         </button>
     </form>
-
-    <a href="{{ route('viewer.index') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">All Files</a>
-    <a href="{{ route('viewer.index', ['category' => 'Post Graduate', 'query' => $searchQuery]) }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Post Graduate</a>
-    <a href="{{ route('viewer.index', ['category' => 'Masteral', 'query' => $searchQuery]) }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Masteral</a>
 @endsection
 
 @section('content')

@@ -116,6 +116,7 @@ class EncoderController extends Controller
     return redirect()->route('encoder.index')->with('success', 'Files uploaded successfully.');
 }
 
+
 public function addFileToStudent(Request $request, $id)
 {
     $validator = Validator::make($request->all(), [
@@ -160,7 +161,9 @@ public function studentFiles($id)
 
     // Check if the user has appropriate role to access student files
     if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
-        $files = $student->uploadedFiles;
+        // Retrieve both active and soft-deleted files associated with the student
+        $files = UploadedFile::withTrashed()->where('student_id', $student->id)->get();
+
         return view('encoder.student_files', compact('files', 'student'));
     } else {
         return redirect()->route('home')->with('error', 'Unauthorized access.');
@@ -190,26 +193,12 @@ public function deleteFile($id)
     // Find the UploadedFile record by ID
     $file = UploadedFile::findOrFail($id);
 
-    // Construct the full file path based on the student's directory and file name
-    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+    // Soft delete the file (mark as deleted in the database)
+    $file->delete();
 
-    // Check if the file exists at the specified path
-    if (file_exists($filePath)) {
-        // Attempt to delete the file from the file system
-        if (unlink($filePath)) {
-            // If file deletion successful, delete the record from the database
-            $file->delete();
-            return redirect()->back()->with('success', 'File deleted successfully.');
-        } else {
-            // If file deletion failed, redirect back with an error message
-            return redirect()->back()->with('error', 'Failed to delete file from the file system.');
-        }
-    } else {
-        // If file not found at the specified path, delete the record from the database
-        $file->delete();
-        return redirect()->back()->with('success', 'File record deleted successfully.');
-    }
+    return redirect()->back()->with('success', 'File record deleted successfully.');
 }
+
 
 public function deleteFolders(Request $request)
 {
@@ -237,33 +226,25 @@ public function destroyMultiple(Request $request)
         return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
 
-    $encoderPassword = $request->input('encoder_password');
-
     // Validate encoder password
     $validatedData = $request->validate([
         'encoder_password' => 'required|string',
     ]);
 
+    $encoderPassword = $validatedData['encoder_password'];
+
     // Check if encoder password matches the authenticated user's password
     if (!Hash::check($encoderPassword, auth()->user()->password)) {
-        return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
+        return redirect()->route('encoder.index')->with('error', 'Incorrect encoder password. Please try again.');
     }
 
     foreach ($studentIds as $studentId) {
-        $student = Student::findOrFail($studentId);
+        $student = Student::withTrashed()->findOrFail($studentId); // Use withTrashed to include soft deleted records
 
-        // Delete student files (if any)
-        foreach ($student->uploadedFiles as $file) {
-            $filePath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file);
+        // Soft delete associated uploaded files
+        $student->uploadedFiles()->delete();
 
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-
-            $file->delete();
-        }
-
-        // Delete the student record
+        // Soft delete the student record
         $student->delete();
     }
 
@@ -271,6 +252,37 @@ public function destroyMultiple(Request $request)
     ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
 
     return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
+}
+
+public function restore($id)
+{
+    // Find the soft-deleted student record
+    $restoredStudent = Student::onlyTrashed()->findOrFail($id);
+
+    // Restore the student (soft delete reversal)
+    $restoredStudent->restore();
+
+    // Restore associated uploaded files
+    $restoredFiles = UploadedFile::onlyTrashed()->where('student_id', $restoredStudent->id)->get();
+
+    foreach ($restoredFiles as $file) {
+        $file->restore(); // Restore the soft-deleted file
+    }
+
+    // Log the restoration activity
+    ActivityLogService::log('Restore student', 'Restored student: ' . $restoredStudent->name);
+
+    return redirect()->route('encoder.index')->with('success', 'Student and associated files restored successfully.');
+}
+
+public function archive()
+{
+    // Fetch all soft-deleted users
+    $archivedStudents = Student::onlyTrashed()->get();
+
+    ActivityLogService::log('View', 'Accessed archived students.');
+
+    return view('encoder.archive', compact('archivedStudents'));
 }
     
 }

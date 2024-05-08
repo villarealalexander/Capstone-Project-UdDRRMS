@@ -4,11 +4,11 @@
 
 @section('top-nav-links')
 @if (auth()->user()->role === 'encoder')
-<a href="{{route('encoder.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{ route('encoder.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
 @elseif (auth()->user()->role === 'admin')
-<a href="{{route('admin.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{ route('admin.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
 @elseif (auth()->user()->role === 'viewer')
-<a href="{{route('viewer.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{ route('viewer.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
 @endif
 @endsection
 
@@ -16,15 +16,15 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
-        @if (auth()->user()->role === 'encoder')
-            <div class = "flex justify-end items-center">
+            @if (auth()->user()->role === 'encoder')
+            <div class="flex justify-end items-center mb-4">
                 <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-                    <button type="button" id="uploadButton" class="btn btn-primary bg-blue-400 hover:bg-blue-600 py-1 px-2 mb-4 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
+                    <button type="button" id="uploadButton" class="bg-blue-400 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
                 </form>
             </div>
-        @endif
+            @endif
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
                     <thead>
@@ -45,14 +45,14 @@
                             <td class="py-2 px-4 border-b border-gray-300 text-center">
                                 <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">View</a>
                                 @if (auth()->user()->role === 'encoder')
-                                    <form action="{{ route('deletefile', $file->id) }}" method="POST" class="inline ml-2">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Delete</button>
-                                    </form>
+                                <form action="{{ route('deletefile', $file->id) }}" method="POST" class="inline ml-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Delete</button>
+                                </form>
                                 @endif
                                 @if (auth()->user()->role === 'admin')
-                                    <a href="{{ route('downloadfile', $file->id) }}" class="bg-green-500 py-1 px-2 text-sm rounded-lg text-white font-semibold hover:underline ml-2">Download</a>
+                                <a href="{{ route('downloadfile', $file->id) }}" class="bg-green-500 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Download</a>
                                 @endif
                             </td>
                         </tr>

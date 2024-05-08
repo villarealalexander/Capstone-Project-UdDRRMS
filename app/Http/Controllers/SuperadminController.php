@@ -134,14 +134,34 @@ class SuperadminController extends Controller
     }
 
     public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-        $user->delete();
+{
+    $user = User::findOrFail($id);
+    $user->delete();  // This now performs a soft delete
 
-        ActivityLogService::log('Delete', 'Deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
+    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
 
-        return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
-    }
+    return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
+}
+
+public function archives()
+{
+    // Fetch all soft-deleted users
+    $archivedUsers = User::onlyTrashed()->get();
+
+    ActivityLogService::log('View', 'Accessed archived users.');
+
+    return view('superadmin.archives', compact('archivedUsers'));
+}
+
+public function restore($id)
+{
+    $user = User::onlyTrashed()->findOrFail($id);
+    $user->restore();
+
+    ActivityLogService::log('Restore', 'Restored a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
+
+    return redirect()->route('superadmin.archives')->with('success', 'User restored successfully.');
+}
 
     public function activityLogs()
     {

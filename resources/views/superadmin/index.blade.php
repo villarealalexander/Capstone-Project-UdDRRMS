@@ -5,7 +5,8 @@
 @section('top-nav-links')
     <a href="{{ route('superadmin.create') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Create User</a>
     <a href="{{ route('superadmin.activitylogs') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Activity Logs</a>
-@endsection
+    <a href="{{ route('superadmin.archives') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Archive Users</a>
+    @endsection
 
 @section('content')
     <div class="mx-auto flex flex-col items-center sm:w-11/12 md:w-4/5 lg:w-3/4 xl:w-5/6">

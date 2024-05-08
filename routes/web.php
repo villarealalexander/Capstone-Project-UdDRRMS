@@ -22,8 +22,9 @@ Route::middleware(['auth', 'CheckRole:superadmin'])->group(function () {
     Route::post('/superadmin/create', [SuperadminController::class, 'store'])->name('superadmin.create');
     Route::get('superadmin/confirm-delete', [SuperadminController::class, 'confirmDelete'])->name('superadmin.confirm-delete');
     Route::post('/superadmin/destroy-multiple', [SuperadminController::class, 'destroyMultiple'])->name('superadmin.destroyMultiple');
-
-
+    Route::get('/superadmin/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
+    Route::post('/superadmin/restore/{id}', [SuperadminController::class, 'restore'])->name('superadmin.restore');
+    Route::get('/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
 
     Route::resource('superadmin', SuperadminController::class)->middleware(['auth', 'verified']);
 });

@@ -131,12 +131,9 @@
             </div>
 
             
-            <div class="mb-4">
-                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring focus:border-blue-300">Submit</button>
-            </div>
-
-            <div  class="mb-2">
-                <a href="{{ route('encoder.index') }}" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md focus:outline-none">Cancel</a>
+            <div class="flex justify-start font-medium">
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 mr-1 rounded-md focus:outline-none focus:ring focus:border-green-300">Submit</button>
+                <a href="{{ route('encoder.index') }}" class=" hover:underline text-blue-500 py-2 px-4 rounded-md focus:outline-none">Cancel</a>
             </div>
             
             @if(session('success'))

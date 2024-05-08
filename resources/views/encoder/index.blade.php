@@ -10,9 +10,7 @@
         </button>
     </form>
 
-    <a href="{{ route('encoder.index') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">All Files</a>
-    <a href="{{ route('encoder.index', ['category' => 'Post Graduate', 'query' => $searchQuery]) }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Post Graduate</a>
-    <a href="{{ route('encoder.index', ['category' => 'Masteral', 'query' => $searchQuery]) }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Masteral</a>
+    <a class="nav-link hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm" href="{{ route('encoder.archive') }}">Archives</a>
 @endsection
 
 @section('content')

@@ -15,6 +15,7 @@ class CreateUploadedFilesTable extends Migration
             $table->string('file');
             $table->timestamps();
             $table->engine = 'InnoDB'; 
+            $table->softDeletes();
         });
     }
 

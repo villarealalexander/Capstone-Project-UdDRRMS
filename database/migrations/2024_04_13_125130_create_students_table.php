@@ -18,6 +18,11 @@ class CreateStudentsTable extends Migration
             $table->timestamps();
             $table->engine = 'InnoDB';
         });
+
+        Schema::table('students', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+           
     }
 
     public function down()

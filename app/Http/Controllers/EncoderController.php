@@ -179,13 +179,22 @@ public function deleteFile($id)
     return redirect()->back()->with('success', 'File record deleted successfully.');
 }
 
+public function show ($id)
+{
+    $student = Student::findOrFail($id);
+
+    return view('encoder.show', compact('student'));
+}
+
 
 public function confirmDelete(Request $request)
 {
-    $selectedStudentIds = request()->input('selected_students', []);
+    $selectedStudentIds = $request->input('selected_students', []);
+
     if (empty($selectedStudentIds)) {
         return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
+
     return view('encoder.confirm-delete', ['studentIds' => $selectedStudentIds]);
 }
 public function destroy($id)

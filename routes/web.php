@@ -49,8 +49,8 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
     Route::get('/archive', [EncoderController::class, 'archive'])->name('encoder.archive');
     Route::put('/archive/{id}/restore', [EncoderController::class, 'restore'])->name('encoder.restore');
-    Route::get('/archive', [EncoderController::class, 'archive'])->name('encoder.archive');
-
+    Route::get('/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
+    
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });
 

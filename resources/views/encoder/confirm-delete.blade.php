@@ -10,7 +10,7 @@
 
         <main>
         <div class="bg-gray-100 p-6 rounded-lg shadow-md">
-            <form action="{{ route('encoder.destroyMultiple') }}" method="POST">
+        <form action="{{ route('encoder.destroyMultiple') }}" method="POST">
                 @csrf
                 @foreach($studentIds as $studentId)
                     <input type="hidden" name="studentsToDelete[]" value="{{ $studentId }}">
@@ -19,9 +19,6 @@
                 <div class="mb-4">
                     <label for="encoder_password" class="block text-sm font-medium text-gray-600">Encoder Password:</label>
                     <input type="password" name="encoder_password" id="encoder_password" class="mt-1 p-2 w-full focus:outline-blue-400 border rounded-md" required>
-                    @if(session('error'))
-                        <div class="text-red-500 ml-2 mt-2">{{ session('error') }}</div>
-                    @endif
                 </div>
 
                 <div class="flex justify-start">

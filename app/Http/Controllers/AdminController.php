@@ -53,7 +53,6 @@ class AdminController extends Controller
     
             ActivityLogService::log('Download', 'Download a file from: ' . $student->name .'->'. '(Filename: ' . $file->file. ')');
     
-            // Serve the file to the client
             return response()->download($filePath, $file->file, $headers);
         } else {
             return redirect()->back()->with('error', 'File not found.');

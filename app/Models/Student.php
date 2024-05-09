@@ -14,7 +14,6 @@ class Student extends Model
     use SoftDeletes;
     protected $fillable = ['name', 'batchyear', 'type_of_student', 'course', 'major'];
 
-    // Migration
     public function up()
     {
         Schema::table('students', function (Blueprint $table) {

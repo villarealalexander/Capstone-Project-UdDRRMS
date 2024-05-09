@@ -63,9 +63,8 @@ class EncoderController extends Controller
     if ($request->input('type_of_student') === 'Undergraduate') {
         $course = $request->input('undergradCourses');
 
-        // Set major based on selected course
         if ($course) {
-            $major = $request->input('major'); // Use the selected major from dropdown
+            $major = $request->input('major');
         }
     } elseif ($request->input('type_of_student') === 'Post Graduate') {
         $course = $request->input('postGradDegrees');
@@ -74,38 +73,31 @@ class EncoderController extends Controller
         } elseif ($course === 'Doctorate') {
             $course = $request->input('doctorateCourses');
         }
-        // Set major based on selected course
         if ($course) {
-            $major = $request->input('major'); // Use the selected major from dropdown
+            $major = $request->input('major');
         }
     }
 
-    // Find existing student or create a new one based on name and batch year
     $student = Student::updateOrCreate([
         'name' => $request->input('Name'),
         'batchyear' => $request->input('BatchYear'),
         'type_of_student' => $request->input('type_of_student'),
         'course' => $course,
-        'major' => $major, // Store major in the database
+        'major' => $major, 
     ]);
 
-    // Handle uploaded files
     if ($request->hasFile('file')) {
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
 
-            // Create a directory path based on student's ID
             $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 
-            // Check if the directory exists, otherwise create it
             if (!file_exists($studentFolderPath)) {
                 mkdir($studentFolderPath, 0755, true);
             }
 
-            // Move the uploaded file into the student's directory
             $file->move($studentFolderPath, $fileName);
 
-            // Save file record in database
             UploadedFile::create([
                 'student_id' => $student->id,
                 'file' => $fileName,
@@ -120,31 +112,27 @@ class EncoderController extends Controller
 public function addFileToStudent(Request $request, $id)
 {
     $validator = Validator::make($request->all(), [
-        'file.*' => 'required|file|max:10240|mimes:pdf', // assuming a max size of 10MB for PDF files
+        'file.*' => 'required|file|max:10240|mimes:pdf',
     ]);
 
     if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
 
-    $student = Student::findOrFail($id); // Ensure the student exists
+    $student = Student::findOrFail($id);
 
     if ($request->hasFile('file')) {
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
 
-        // Create a directory path based on student's ID
         $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 
-        // Check if the directory exists, otherwise create it
         if (!file_exists($studentFolderPath)) {
             mkdir($studentFolderPath, 0755, true);
         }
 
-        // Move the uploaded file into the student's directory
         $file->move($studentFolderPath, $fileName);
 
-        // Save file record in the database
         UploadedFile::create([
             'student_id' => $student->id,
             'file' => $fileName,
@@ -159,9 +147,7 @@ public function studentFiles($id)
     $student = Student::findOrFail($id);
     $user = auth()->user();
 
-    // Check if the user has appropriate role to access student files
     if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
-        // Retrieve both active and soft-deleted files associated with the student
         $files = UploadedFile::withTrashed()->where('student_id', $student->id)->get();
 
         return view('encoder.student_files', compact('files', 'student'));
@@ -172,83 +158,67 @@ public function studentFiles($id)
 
 public function viewFile($id)
 {
-    // Find the UploadedFile record by ID
+
     $file = UploadedFile::findOrFail($id);
 
-    // Construct the full file path based on the student's directory and file name
     $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
 
-    // Check if the file exists at the specified path
     if (file_exists($filePath)) {
-        // Serve the file as a response
         return response()->file($filePath);
     } else {
-        // If file not found, redirect back with an error message
         return back()->with('error', 'File not found.');
     }
 }
 
 public function deleteFile($id)
 {
-    // Find the UploadedFile record by ID
     $file = UploadedFile::findOrFail($id);
 
-    // Soft delete the file (mark as deleted in the database)
     $file->delete();
 
     return redirect()->back()->with('success', 'File record deleted successfully.');
 }
 
 
-public function deleteFolders(Request $request)
+public function confirmDelete(Request $request)
 {
-    $foldersToDelete = $request->input('foldersToDelete', []);
-
-    if (empty($foldersToDelete)) {
+    $selectedStudentIds = request()->input('selected_students', []);
+    if (empty($selectedStudentIds)) {
         return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
-
-    // Pass the list of student IDs to the confirmation view
-    return view('encoder.confirm-delete', ['studentIds' => $foldersToDelete]);
+    return view('encoder.confirm-delete', ['studentIds' => $selectedStudentIds]);
 }
-public function confirmDelete($id)
+public function destroy($id)
 {
     $student = Student::findOrFail($id);
+    $student->delete(); 
 
-    return view('encoder.confirm-delete', compact('student'));
+    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $student->name . ' (Batch Year: ' . $student->batchyear .')'  . ', ' . ' (Type of Student: '. $student->type_of_student . ')' . ', ' . ' (Course: '. $student->course . ')' . ', ' . ' (Major: '. $student->major . ')');
+
+    return redirect()->route('encoder.index')->with('success', 'Student deleted successfully.');
 }
 
 public function destroyMultiple(Request $request)
 {
     $studentIds = $request->input('studentsToDelete', []);
+    $encoderPassword = $request->input('encoder_password');
 
-    if (empty($studentIds)) {
-        return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
-    }
-
-    // Validate encoder password
     $validatedData = $request->validate([
         'encoder_password' => 'required|string',
     ]);
 
-    $encoderPassword = $validatedData['encoder_password'];
-
-    // Check if encoder password matches the authenticated user's password
     if (!Hash::check($encoderPassword, auth()->user()->password)) {
-        return redirect()->route('encoder.index')->with('error', 'Incorrect encoder password. Please try again.');
+        return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
     }
 
     foreach ($studentIds as $studentId) {
-        $student = Student::withTrashed()->findOrFail($studentId); // Use withTrashed to include soft deleted records
+        $student = Student::withTrashed()->findOrFail($studentId); 
 
-        // Soft delete associated uploaded files
         $student->uploadedFiles()->delete();
 
-        // Soft delete the student record
         $student->delete();
     }
 
-    // Log activity
     ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
 
     return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
@@ -256,28 +226,24 @@ public function destroyMultiple(Request $request)
 
 public function restore($id)
 {
-    // Find the soft-deleted student record
     $restoredStudent = Student::onlyTrashed()->findOrFail($id);
 
-    // Restore the student (soft delete reversal)
     $restoredStudent->restore();
 
-    // Restore associated uploaded files
     $restoredFiles = UploadedFile::onlyTrashed()->where('student_id', $restoredStudent->id)->get();
 
     foreach ($restoredFiles as $file) {
-        $file->restore(); // Restore the soft-deleted file
+        $file->restore(); 
     }
 
-    // Log the restoration activity
     ActivityLogService::log('Restore student', 'Restored student: ' . $restoredStudent->name);
 
-    return redirect()->route('encoder.index')->with('success', 'Student and associated files restored successfully.');
+    return redirect()->route('encoder.archive')->with('success', 'Student and associated files restored successfully.');
 }
 
 public function archive()
 {
-    // Fetch all soft-deleted users
+
     $archivedStudents = Student::onlyTrashed()->get();
 
     ActivityLogService::log('View', 'Accessed archived students.');

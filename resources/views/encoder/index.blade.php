@@ -17,11 +17,9 @@
     <div class="w-full items-center mx-auto mt-4 md:w-[650px] lg:w-3/4">
         <div class="flex justify-end items-center mb-4">
             <a href="{{ route('encoder.upload') }}" class="bg-green-400 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Upload File</a>
-            <form id="deleteForm" action="{{ route('encoder.deleteFolders') }}" method="POST">
+            <form id="deleteForm" action="{{ route('encoder.confirm-delete') }}" method="POST">
                 @csrf
-                @method('DELETE')
                 <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-lg">Delete Student Folder</button>
-           
         </div>
         
         <div class="overflow-x-auto" style ="max-height:500px">
@@ -41,7 +39,7 @@
                         <tr>
                             <td class="border px-2 py-2 text-center w-1/4 ">
                                 <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-start cursor-pointer">
-                                    <input type="checkbox" name="foldersToDelete[]" value="{{ $student->id }}" class="w-6 h-6 mr-2 folderCheckbox align-top">
+                                    <input type="checkbox" name="selected_students[]" value="{{ $student->id }}" class="w-6 h-6 mr-2 folderCheckbox align-top">
                                     <div class="border-l border-gray-400 pl-20">
                                         <span class="text-black hover:underline">{{ $student->name }}</span>
                                     </div>

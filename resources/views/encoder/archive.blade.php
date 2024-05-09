@@ -15,7 +15,9 @@
 @section('content')
     <div class="container mx-auto text-center">
         <h1 class="text-2xl font-bold mb-4 mt-4">Archived Students</h1>
-
+        @if (session('success'))
+                    <div class="text-green-500 mr-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
+                @endif
         @if ($archivedStudents->isEmpty())
             <p>No archived students found.</p>
         @else

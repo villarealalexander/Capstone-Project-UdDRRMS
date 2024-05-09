@@ -23,17 +23,6 @@ class SuperadminController extends Controller
         $users = User::all();
         return view('superadmin.index', compact('users', 'role', 'name'));
     }
-
-    public function show($id)
-    {
-        $user = User::findOrFail($id);
-
-        ActivityLogService::log('View', 'Viewed a user profile: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')') ;
-        
-        return view('superadmin.show', compact('user'));
-    }
-
-
     public function edit($id)
     {
         $user = User::findOrFail($id);
@@ -133,19 +122,8 @@ class SuperadminController extends Controller
         return redirect()->back()->with('success', 'User updated successfully.');
     }
 
-    public function destroy($id)
-{
-    $user = User::findOrFail($id);
-    $user->delete();  // This now performs a soft delete
-
-    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
-
-    return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
-}
-
 public function archives()
 {
-    // Fetch all soft-deleted users
     $archivedUsers = User::onlyTrashed()->get();
 
     ActivityLogService::log('View', 'Accessed archived users.');
@@ -184,27 +162,34 @@ public function restore($id)
         'userIds' => $selectedUserIds
     ]);
 }
+
+public function destroy($id)
+{
+    $user = User::findOrFail($id);
+    $user->delete(); 
+
+    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
+
+    return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
+}
     
     public function destroyMultiple(Request $request)
     {
         $userIds = $request->input('usersToDelete', []);
         $superadminPassword = $request->input('superadmin_password');
-    
-        // Validate the superadmin password
+ 
         $validatedData = $request->validate([
             'superadmin_password' => 'required|string',
         ]);
-    
-        // Check if the provided password matches the authenticated superadmin's password
+
         if (!Hash::check($superadminPassword, auth()->user()->password)) {
             return redirect()->back()->with('error', 'Incorrect superadmin password.');
         }
     
-        // Perform deletion of selected users
         $deletedUsers = User::whereIn('id', $userIds)->delete();
     
         if ($deletedUsers > 0) {
-            // Log activity
+
             ActivityLogService::log('Delete users', 'Deleted selected users: ' . implode(', ', $userIds));
     
             return redirect()->route('superadmin.index')->with('success', 'Selected users deleted successfully.');

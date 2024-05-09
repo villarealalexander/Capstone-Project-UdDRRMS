@@ -10,7 +10,7 @@
         </button>
     </form>
 
-    <a class="nav-link hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm" href="{{ route('encoder.archive') }}">Archives</a>
+    <a class="nav-link hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm" href="{{ route('encoder.archives') }}">Archives</a>
 @endsection
 
 @section('content')

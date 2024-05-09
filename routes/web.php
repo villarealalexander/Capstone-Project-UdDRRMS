@@ -16,15 +16,18 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'CheckRole:superadmin'])->group(function () {
-    Route::get('/superadmin/activitylogs', [SuperadminController::class, 'activityLogs'])->name('superadmin.activitylogs');
     Route::get('/superadmin.index', [SuperadminController::class, 'index'])->name('superadmin');
     Route::put('/superadmin/{id}', [SuperadminController::class, 'update'])->name('superadmin.update');
     Route::post('/superadmin/create', [SuperadminController::class, 'store'])->name('superadmin.create');
+
     Route::get('superadmin/confirm-delete', [SuperadminController::class, 'confirmDelete'])->name('superadmin.confirm-delete');
     Route::post('/superadmin/destroy-multiple', [SuperadminController::class, 'destroyMultiple'])->name('superadmin.destroyMultiple');
+    
+    Route::get('/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
     Route::get('/superadmin/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
     Route::post('/superadmin/restore/{id}', [SuperadminController::class, 'restore'])->name('superadmin.restore');
-    Route::get('/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
+    
+    Route::get('/superadmin/activitylogs', [SuperadminController::class, 'activityLogs'])->name('superadmin.activitylogs');
 
     Route::resource('superadmin', SuperadminController::class)->middleware(['auth', 'verified']);
 });
@@ -40,16 +43,18 @@ Route::middleware(['auth', 'CheckRole:admin'])->group(function () {
 
 Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::get('/encoder/index', [EncoderController::class, 'index'])->name('encoder');
-    Route::get('/uploadfile', [EncoderController::class, 'create'])->name('uploadfile.create');
-    Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
-    Route::delete('/delete-file/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile');
+
     Route::get('/encoder/upload', [EncoderController::class, 'uploadfile'])->name('encoder.upload');
+    Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
+    Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
+    
+    Route::delete('/delete-file/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
     Route::post('encoder/confirm-delete', [EncoderController::class, 'confirmDelete'])->name('encoder.confirm-delete');
     Route::post('/encoder/destroy-multiple', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
-    Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
-    Route::get('/archive', [EncoderController::class, 'archive'])->name('encoder.archive');
+    
+    Route::get('/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
+    Route::get('/encoder/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
     Route::put('/archive/{id}/restore', [EncoderController::class, 'restore'])->name('encoder.restore');
-    Route::get('/archives', [SuperadminController::class, 'archives'])->name('superadmin.archives');
     
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });

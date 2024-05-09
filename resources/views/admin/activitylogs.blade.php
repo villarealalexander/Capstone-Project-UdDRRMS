@@ -8,9 +8,9 @@
 
 @section('content')
     <div class="container mx-auto px-4 sm:px-2">
-        <div class="overflow-x-auto overflow-y-auto">
+        <div class="overflow-x-auto overflow-y-auto" style="height: 660px">
             <table class="min-w-full bg-white divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-50 sticky top-0">
                     <tr>
                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Role</th>

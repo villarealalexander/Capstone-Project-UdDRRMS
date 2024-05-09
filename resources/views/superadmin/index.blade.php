@@ -43,8 +43,7 @@
                                 <td class="text-center py-2 px-12 border-b">{{ $user->email }}</td>
                                 <td class="text-center py-2 px-12 border-b">{{ $user->role }}</td>
                                 <td class="py-2 px-12 border-b text-center">
-                                    <a href="{{ route('superadmin.show', $user->id) }}" class="text-blue-500 hover:underline">Show</a>
-                                    <a href="{{ route('superadmin.edit', $user->id) }}" class="text-yellow-500 hover:underline ml-2">Edit</a>
+                                    <a href="{{ route('superadmin.edit', $user->id) }}" class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2">Edit</a>
                                 </td>
                             </tr>
                         @endforeach

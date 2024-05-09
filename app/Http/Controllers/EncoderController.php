@@ -195,7 +195,7 @@ public function deleteFile($id)
     return redirect()->back()->with('success', 'File record deleted successfully.');
 }
 
-public function confirmDelete(Request $request)
+public function confirmStudentDelete(Request $request)
 {
     $selectedStudentIds = $request->input('selected_students', []);
 
@@ -203,7 +203,7 @@ public function confirmDelete(Request $request)
         return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
     }
 
-    return view('encoder.confirm-delete', ['studentIds' => $selectedStudentIds]);
+    return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
 }
 
 public function destroyMultiple(Request $request)
@@ -215,22 +215,24 @@ public function destroyMultiple(Request $request)
         'encoder_password' => 'required|string',
     ]);
 
+    // Verify encoder password
     if (!Hash::check($encoderPassword, auth()->user()->password)) {
         return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
     }
 
     foreach ($studentIds as $studentId) {
-        $student = Student::withTrashed()->findOrFail($studentId); 
+        $student = Student::withTrashed()->findOrFail($studentId);
 
         $student->uploadedFiles()->delete();
-
-        $student->delete();
+        $student->delete(); 
     }
 
+    // Log activity
     ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
 
-    return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files deleted successfully.');
+    return redirect()->route('encoder.archives')->with('success', 'Selected folders and associated files deleted successfully.');
 }
+
 
 public function restore($id)
 {

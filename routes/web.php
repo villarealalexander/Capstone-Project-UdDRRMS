@@ -49,7 +49,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
     
     Route::delete('/delete-file/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
-    Route::post('encoder/confirm-delete', [EncoderController::class, 'confirmDelete'])->name('encoder.confirm-delete');
+    Route::get('encoder/confirm-student-delete', [EncoderController::class, 'confirmStudentDelete'])->name('encoder.confirm-student-delete');
     Route::post('/encoder/destroy-multiple', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
     
     Route::get('/archives', [EncoderController::class, 'archives'])->name('encoder.archives');

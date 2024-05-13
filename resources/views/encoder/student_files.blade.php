@@ -43,7 +43,7 @@
                                 </div>
                             </td>
                             <td class="py-2 px-4 border-b border-gray-300 text-center">
-                                <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">View</a>
+                                <a href="{{ route('viewfile', $file->id) }}" target="_blank" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">View</a>
                                 @if (auth()->user()->role === 'encoder')
                                 <form action="{{ route('deletefile', $file->id) }}" method="POST" class="inline ml-2">
                                     @csrf

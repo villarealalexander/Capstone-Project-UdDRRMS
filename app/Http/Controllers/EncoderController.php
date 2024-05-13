@@ -230,7 +230,7 @@ public function destroyMultiple(Request $request)
     // Log activity
     ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
 
-    return redirect()->route('encoder.archives')->with('success', 'Selected folders and associated files deleted successfully.');
+    return redirect()->route('encoder.archives')->with('success', 'Selected folders and associated files soft deleted successfully.');
 }
 
 

@@ -23,6 +23,12 @@ class SuperadminController extends Controller
         $users = User::all();
         return view('superadmin.index', compact('users', 'role', 'name'));
     }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('superadmin.show', compact('user'));
+    }
     public function edit($id)
     {
         $user = User::findOrFail($id);

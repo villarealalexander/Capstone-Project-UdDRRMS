@@ -3,31 +3,33 @@
 @section('title', 'Activity Logs')
 
 @section('top-nav-links')
-    <a href="{{route('superadmin.index')}}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+    <a href="{{route('superadmin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @endsection
 
 @section('content')
     <div class="container mx-auto px-4 sm:px-2">
         <!-- Scrollable Container -->
-        <div class="overflow-x-auto overflow-y-auto" style="max-height: 610px"> 
+        <div class="overflow-x-auto overflow-y-auto" style="max-height: 700px"> 
             <table class="min-w-full bg-white divide-y divide-gray-200 ">
                 <thead class="bg-gray-50 sticky top-0 ">
                     <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Role</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action Type</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">User Role</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action Type</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm text-gray-700 divide-y divide-gray-200">
                     @foreach($activityLogs as $log)
                         <tr>
-                            <td class="px-4 py-2">{{ $log->user->name }}</td>
-                            <td class="px-4 py-2">{{ $log->user_role }}</td>
-                            <td class="px-4 py-2">{{ $log->action_type }}</td>
-                            <td class="px-4 py-2">{{ $log->details }}</td>
-                            <td class="px-4 py-2">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
+                            <td class="px-4 py-2 text-center">{{ $log->user->name }}</td>
+                            <td class="px-4 py-2 text-center">{{ $log->user_role }}</td>
+                            <td class="px-4 py-2 text-center">{{ $log->action_type }}</td>
+                            <td class="px-4 py-2 text-center">{{ $log->details }}</td>
+                            <td class="px-4 py-2 text-center">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

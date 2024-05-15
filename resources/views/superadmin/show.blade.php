@@ -1,9 +1,4 @@
-@extends('layouts.master-layout')
-
-@section('title', 'Show User')
-
-@section('content')
-    <div class="mx-auto max-w-lg mt-10">
+<div class="mx-auto max-w-lg mt-10">
         <header class="text-2xl bg-gray-50 text-gray-500 text-center p-4 font-semibold">
             <h1>Show User</h1>
         </header>
@@ -17,8 +12,7 @@
             </div>
 
             <div class="mt-4">
-                <a href="{{ route('superadmin.index') }}" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">Back to User List</a>
+            <button type="button" class=" inline-flex justify-start rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeShowModal()">Back</button>
             </div>
         </main>
     </div>
-@endsection

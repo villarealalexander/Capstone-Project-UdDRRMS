@@ -3,26 +3,31 @@
 @section('title', 'Archived Users')
 
 @section('top-nav-links')
-    <a href="{{ route('superadmin.index') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Home</a>
-    <a href="{{ route('superadmin.create') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Create User</a>
-    <a href="{{ route('superadmin.activitylogs') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Activity Logs</a>
+    <a href="{{ route('superadmin.index') }}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+        <i class="fa-solid fa-house mr-1"></i>Back to Home
+    </a>
+@endsection
+
+@section('page-title')
+<i class="fas fa-archive mr-2"></i>Archived Users
 @endsection
 
 @section('content')
     <div class="mx-auto flex flex-col items-center sm:w-11/12 md:w-4/5 lg:w-3/4 xl:w-5/6">
-        <main class="w-full overflow-x-auto" style="max-height: 500px">
-        <div class="flex justify-end mb-2 mt-2">
-                @if (session('success'))
-                    <div class="text-green-500 mr-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
-                @endif
-            <a href="{{ route('superadmin.index') }}" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Back to User's List</a>
+        <!-- Container for the success message -->
+        <div class="flex justify-center w-full my-4 h-8">
+            @if (session('success'))
+                <div class="text-green-500 font-bold text-lg">{{ session('success') }}</div>
+            @endif
         </div>
-            <table class="min-w-full bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md rounded-md text-xl">
+
+        <main class="w-full overflow-x-auto" style="max-height: 500px">
+            <table class="min-w-full mt-4 bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md text-xl">
                 <thead class="bg-white sticky top-0">
                     <tr>
-                        <th class="text-gray-500 py-2 px-4 border-b">Name</th>
-                        <th class="text-gray-500 py-2 px-4 border-b">Email</th>
-                        <th class="text-gray-500 py-2 px-4 border-b">Actions</th>
+                        <th class= "py-2 px-4 border-b text-black ">Name</th>
+                        <th class= "py-2 px-4 border-b text-black">Email</th>
+                        <th class= "py-2 px-4 border-b text-black">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

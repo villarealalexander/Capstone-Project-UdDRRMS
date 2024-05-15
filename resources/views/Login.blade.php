@@ -23,7 +23,7 @@
                     <div class="flex flex-1 flex-col">
                         <div class="mb-4">
                             <label for="email" class="block text-sm font-medium text-gray-600">Email</label>
-                            <input type="email" name="email" id="email" placeholder="Email" class="block w-full p-2 h-10 border-2 rounded-md focus:outline-blue-400 @error('email') border-red-500 @enderror" value="{{ old('email') }} " autocomplete="off" >
+                            <input type="email" name="email" id="email" placeholder="Email" class="block w-full p-2 h-10 border-2 rounded-md focus:outline-blue-400 @error('email') border-red-500 @enderror" value="{{ old('email') }} " autocomplete="on" >
                             <span id="email-error" class="text-red-500 text-sm"></span>
                             @error('email')
                                 <div class="text-red-500 text-sm">{{ $message }}</div>

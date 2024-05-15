@@ -2,32 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
+    use HasFactory, SoftDeletes;
 
-    use SoftDeletes;
-    protected $fillable = ['name', 'batchyear', 'type_of_student', 'course', 'major'];
+    protected $fillable = [
+        'name', 'batchyear', 'type_of_student', 'course', 'major', 'month_uploaded'
+    ];
 
-    public function up()
-    {
-        Schema::table('students', function (Blueprint $table) {
-            $table->string('course')->nullable()->after('type_of_student');
-        });
-    }
-    
-    public function down()
-    {
-        Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn('course');
-        });
-    }
-
+    // Define relationships
     public function uploadedFiles()
     {
         return $this->hasMany(UploadedFile::class);

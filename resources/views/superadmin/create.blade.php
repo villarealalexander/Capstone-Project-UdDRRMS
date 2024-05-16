@@ -14,6 +14,7 @@
 
 @section('content')
 <div class="mx-auto max-w-sm my-8 sm:w-3/4 md:w-2/4 lg:w-1/2 xl:w-1/4 "">
+<div class = "w-full bg-gray-50 p-6 rounded-lg">
     <form action="{{ route('superadmin.store') }}" method="POST">
         @csrf
 
@@ -70,5 +71,6 @@
             </div>
         @endif
     </form>
+    </div>
 </div>
 @endsection

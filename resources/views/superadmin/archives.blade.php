@@ -15,14 +15,14 @@
 @section('content')
     <div class="mx-auto flex flex-col items-center sm:w-11/12 md:w-4/5 lg:w-3/4 xl:w-5/6">
         <!-- Container for the success message -->
-        <div class="flex justify-center w-full my-4 h-8">
+        <div class="flex justify-center w-full my-2 h-2">
             @if (session('success'))
                 <div class="text-green-500 font-bold text-lg">{{ session('success') }}</div>
             @endif
         </div>
 
         <main class="w-full overflow-x-auto" style="max-height: 500px">
-            <table class="min-w-full mt-4 bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md text-xl">
+            <table class="min-w-full mt-4 bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md rounded-md text-xl">
                 <thead class="bg-white sticky top-0">
                     <tr>
                         <th class= "py-2 px-4 border-b text-black ">Name</th>

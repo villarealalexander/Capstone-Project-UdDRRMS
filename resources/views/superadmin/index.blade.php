@@ -18,8 +18,15 @@
     <div class="w-full flex flex-col items-center shadow-lg">
         <form id="deleteForm" action="{{ route('superadmin.confirm-delete') }}" method="GET" class="w-full">
             @csrf
-            <div class="flex justify-start my-2 w-32">
+            <div class="flex justify-start my-2 items-center">
                 <button type="submit" class="px-2 py-2 bg-red-500 text-sm text-white rounded-lg hover:bg-red-600">Delete Selected</button>
+                @if (session('error'))
+                    <div class="ml-4 text-red-500">{{ session('error') }}</div>
+                @endif
+
+                @if (session('success'))
+                    <div class="font-semibold text-green-500 ml-4 ">{{ session('success') }}</div>
+                @endif
             </div>
 
             <main class="w-full overflow-x-auto rounded-xl">

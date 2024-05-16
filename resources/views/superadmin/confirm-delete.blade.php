@@ -28,7 +28,6 @@
                         @if(session('error'))
                              <div class="text-red-500 ml-2 mt-2">{{ session('error') }}</div>
                         @endif
-                        
                     </div>
 
                     <div class="flex justify-start">

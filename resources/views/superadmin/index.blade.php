@@ -45,7 +45,7 @@
                                 <td class="py-2 px-4 text-center border-gray-50">{{ $user->email }}</td>
                                 <td class="py-2 px-4 text-center border-gray-50">{{ $user->role }}</td>
                                 <td class="py-2 px-4 text-center">
-                                <a href="{{ route('superadmin.edit', $user->id) }}" class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2">Edit</a>
+                                <a href="{{ route('superadmin.edit', $user->id) }}" class="text-white hover:bg-blue-800 bg-blue-500 rounded-md px-2">Edit</a>
                                 <a href="{{ route('superadmin.show', $user->id) }}" class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2">Show</a>
 
                                 </td>
@@ -56,6 +56,7 @@
             </main>
         </form>
     </div>
+    
     <script>
         document.getElementById('selectAll').addEventListener('change', function() {
             var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selected_users[]"]');

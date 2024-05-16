@@ -1,4 +1,19 @@
-<div class="p-6">
+@extends('layouts.master-layout')
+
+@section('title', 'Create User')
+
+@section('top-nav-links')
+    <a href="{{route('superadmin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
+@endsection
+
+@section('page-title')
+<i class="fa-solid fa-user-plus mr-2"></i>Create User
+@endsection
+
+@section('content')
+<div class="mx-auto max-w-sm my-8 sm:w-3/4 md:w-2/4 lg:w-1/2 xl:w-1/4 "">
     <form action="{{ route('superadmin.store') }}" method="POST">
         @csrf
 
@@ -46,7 +61,7 @@
 
         <div class="flex justify-start items-center">
             <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Create User</button>
-            <button type="button" class="mt-3 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeCreateModal()">Cancel</button>
+            <a href = "{{route('superadmin.index')}}" class="mt-3 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</a>
         </div>
 
         @if(session('success'))
@@ -56,3 +71,4 @@
         @endif
     </form>
 </div>
+@endsection

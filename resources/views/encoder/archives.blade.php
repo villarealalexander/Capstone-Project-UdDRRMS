@@ -3,13 +3,9 @@
 @section('title', 'Encoder Page')
 
 @section('top-nav-links')
-    <form action="{{ route('encoder.index') }}" method="GET" class="flex items-center border border-white rounded-full overflow-hidden shadow-md">
-        <input type="text" name="query" id="search" class="w-full py-1 px-2 bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
-        <button type="submit" class="bg-gray-50 py-1 px-2">
-            <i class="fas fa-search text-black"></i>
-        </button>
-    </form>
-    <a href="{{ route('encoder.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+    <a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @endsection
 
 @section('content')

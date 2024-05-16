@@ -4,11 +4,17 @@
 
 @section('top-nav-links')
 @if (auth()->user()->role === 'encoder')
-<a href="{{ route('encoder.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @elseif (auth()->user()->role === 'admin')
-<a href="{{ route('admin.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{route('admin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @elseif (auth()->user()->role === 'viewer')
-<a href="{{ route('viewer.index') }}" class="hover:bg-red-700 bg-red-500 px-4 py-1 rounded-lg text-white font-semibold text-sm">Back to Home</a>
+<a href="{{route('viewer.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @endif
 @endsection
 
@@ -21,7 +27,7 @@
                 <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-                    <button type="button" id="uploadButton" class="bg-blue-400 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Upload Files</button>
+                    <button type="button" id="uploadButton" class="bg-blue-400 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Add Files</button>
                 </form>
             </div>
             @endif

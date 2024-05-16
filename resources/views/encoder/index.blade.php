@@ -3,27 +3,32 @@
 @section('title', 'Encoder Page')
 
 @section('top-nav-links')
-    <form action="{{ route('encoder.index') }}" method="GET" class="flex items-center border border-white rounded-full overflow-hidden shadow-md">
-        <input type="text" name="query" id="search" class="w-full py-1 px-2 bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
+    <form action="{{ route('encoder.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
+        <input type="text" name="query" id="search" class="w-full py-1 px-4 mx-auto bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
         <button type="submit" class="bg-gray-50 py-1 px-2">
             <i class="fas fa-search text-black"></i>
         </button>
     </form>
 
-    <a class="nav-link hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm" href="{{ route('encoder.archives') }}">Archives</a>
+    <a href="{{ route('encoder.archives') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2" >
+        <i class="fas fa-archive"></i> Archive
+    </a>
+
+    <a href="{{ route('encoder.upload') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
+        <i class="fa-solid fa-upload mr-1"></i>Upload File
+    </a>
 @endsection
 
 @section('content')
-    <div class="w-full items-center mx-auto mt-4 md:w-[650px] lg:w-3/4">
+    <div class="w-full items-center mx-auto mt-4 md:w-[650px] lg:w-full">
         <form id="deleteForm" action="{{ route('encoder.confirm-student-delete') }}" method="GET">
             @csrf
-            <div class="flex justify-end items-center mb-4">
-                <a href="{{ route('encoder.upload') }}" class="bg-green-400 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Upload File</a>
+            <div class="flex justify-start items-center mb-2">
                 <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-lg">Delete Student Folder</button>
             </div>
 
-            <div class="overflow-x-auto" style="max-height:500px">
-                <table class="w-full bg-white rounded-lg text-lg mb-2">
+            <div class="overflow-x-auto" style="height: 580px">
+                <table class="min-w-full bg-white text-lg mb-2">
                     <thead class="bg-gray-200 sticky top-0">
                         <tr>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Name</th>
@@ -51,58 +56,66 @@
                             <tr>
                                 <td class="border px-2 py-2 text-center w-1/4">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-start cursor-pointer">
-                                        <input type="checkbox" name="selected_students[]" value="{{ $student->id }}" class="w-6 h-6 mr-2 folderCheckbox align-top">
-                                        <div class="border-l border-gray-400 pl-20">
+                                        <input type="checkbox" name="selected_students[]" value="{{ $student->id }}" class="w-6 h-6 mr-2 folderCheckbox align-middle">
+                                        <div class="border-l border-gray-400 pl-2">
                                             <span class="text-black hover:underline">{{ $student->name }}</span>
                                         </div>
                                     </a>
                                 </td>
     
                                 <td class="border px-2 py-2 text-left w-1/4">
-                                <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
-                                    {{ $student->batchyear }}
-                                </a>
-                            </td>
+                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
+                                        {{ $student->batchyear }}
+                                    </a>
+                                </td>
 
-                            <td class="border px-2 py-2 text-center w-1/4">
-                                <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
-                                    {{ $student->type_of_student }}
-                                </a>
-                            </td>
+                                <td class="border px-2 py-2 text-center w-1/4">
+                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
+                                        {{ $student->type_of_student }}
+                                    </a>
+                                </td>
 
-                            <td class="border px-2 py-2 text-center w-1/4">
-                                <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
-                                    @if ($student->major)
-                                    {{ $student->course }} major in {{ $student->major }}
-                                    @else
-                                    {{ $student->course }} 
-                                    @endif
-                                </a>
-                            </td>
+                                <td class="border px-2 py-2 text-center w-1/4">
+                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
+                                        @if ($student->major)
+                                            {{ $student->course }} major in {{ $student->major }}
+                                        @else
+                                            {{ $student->course }} 
+                                        @endif
+                                    </a>
+                                </td>
 
-                            <td class="border px-2 py-2 text-center w-1/5">
-                                @if ($student->type_of_student === 'Post Graduate')
-                                    @if ($student->course === 'MIT')
-                                        Masters in Information Technology (MIT)
-                                    @elseif ($student->course === 'MBA')
-                                        Masters in Business Administration (MBA)
-                                    @elseif ($student->course === 'MAED')
-                                        Master of Arts in Education (MAED)
-                                    @elseif ($student->course === 'MED')
-                                        Master of Education (MED)
-                                    @elseif ($student->course === 'MDB')
-                                        Master of Developmental Banking (MDB)
-                                    @elseif ($student->course === 'PhD')
-                                        Doctor of Philosophy (PhD)
-                                    @elseif ($student->course === 'DBA')
-                                        Doctor of Business Administration (DBA)
+                                <td class="border px-2 py-2 text-center w-1/5">
+                                    @if ($student->type_of_student === 'Post Graduate')
+                                        @switch($student->course)
+                                            @case('MIT')
+                                                Masters in Information Technology (MIT)
+                                                @break
+                                                @case('MBA')
+                                                Masters in Business Administration (MBA)
+                                                @break
+                                            @case('MAED')
+                                                Master of Arts in Education (MAED)
+                                                @break
+                                            @case('MED')
+                                                Master of Education (MED)
+                                                @break
+                                            @case('MDB')
+                                                Master of Developmental Banking (MDB)
+                                                @break
+                                            @case('PhD')
+                                                Doctor of Philosophy (PhD)
+                                                @break
+                                            @case('DBA')
+                                                Doctor of Business Administration (DBA)
+                                                @break
+                                            @default
+                                                N/A
+                                        @endswitch
                                     @else
                                         N/A
                                     @endif
-                                @else
-                                    N/A
-                                @endif
-                            </td>
+                                </td>
 
                                 <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
                             </tr>
@@ -111,7 +124,6 @@
                 </table>
             </div>
         </form>
-        <!-- Custom pagination links -->
-        {{ $students->appends(['sort_field' => $sortParams['field'], 'sort_direction' => $sortParams['direction'], 'query' => $searchQuery])->links() }}
     </div>
 @endsection
+

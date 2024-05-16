@@ -35,20 +35,18 @@ class EncoderController extends Controller
 
     // Custom sorting logic for 'month_uploaded'
     if ($sortField === 'month_uploaded') {
-        // Define an array with month names in the desired order
         $monthsOrder = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
 
-        // Sort by the index of month names array based on the current sorting direction
         $studentsQuery->orderByRaw("FIELD(month_uploaded, '" . implode("', '", $monthsOrder) . "') " . $sortDirection);
     } else {
-        // Default sorting for other fields
         $studentsQuery->orderBy($sortField, $sortDirection);
     }
 
-    $students = $studentsQuery->paginate(5);
+    // Retrieve all matching records without pagination
+    $students = $studentsQuery->get();
 
     // Pass sorting parameters to the view
     $sortParams = [
@@ -56,6 +54,7 @@ class EncoderController extends Controller
         'direction' => $sortDirection,
     ];
 
+    // Return view without pagination
     return view('encoder.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
 }
 

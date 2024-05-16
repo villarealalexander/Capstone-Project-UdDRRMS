@@ -3,7 +3,9 @@
 @section('title', 'Upload File')
 
 @section('top-nav-links')
-    <a href="{{ route('encoder.index') }}" class="hover:bg-blue-300 px-4 py-1 border-2 border-black rounded-lg text-black font-semibold text-sm">Home</a>
+<a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+    </a>
 @endsection
 
 @section('content')

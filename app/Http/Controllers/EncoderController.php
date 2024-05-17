@@ -229,23 +229,18 @@ public function deleteFile($id)
 {
     $file = UploadedFile::findOrFail($id);
 
-    // Get the file path
     $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
 
-    // Check if the file exists in the file system
     if (file_exists($filePath)) {
-        // If the file exists, delete it from the file system
         unlink($filePath);
     }
 
-    // Delete the file record from the database
-    $file->delete();
+    // Soft delete the file record
+    // $file->delete();
 
-    // Get the updated list of files for the student
-    $updatedFiles = UploadedFile::withTrashed()->where('student_id', $file->student_id)->get();
+    $file->forceDelete();
 
-    // Redirect back to the student files page with the updated list of files
-    return redirect()->route('student.files', $file->student_id)->with(['success' => 'File record deleted successfully.', 'files' => $updatedFiles]);
+    return redirect()->back()->with('success', 'File permanently deleted successfully.');
 }
 
 public function confirmStudentDelete(Request $request)

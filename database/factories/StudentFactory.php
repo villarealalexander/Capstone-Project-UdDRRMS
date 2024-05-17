@@ -29,7 +29,7 @@ class StudentFactory extends Factory
         return [
             'name' => $this->faker->name,
             'batchyear' => $this->faker->numberBetween(2010, 2023),
-            'type_of_student' => $this->faker->randomElement(['Regular', 'Exchange', 'Transfer']),
+            'type_of_student' => $this->faker->randomElement(['Undergraduate', 'Postgraduate']),
             'course' => $this->faker->randomElement(['Computer Science', 'Engineering', 'Business', 'Arts']),
             'major' => $this->faker->randomElement(['Mathematics', 'Physics', 'Economics', 'Literature']),
             'month_uploaded' => $this->faker->randomElement($months),

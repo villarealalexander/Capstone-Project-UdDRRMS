@@ -164,23 +164,27 @@ public function addFileToStudent(Request $request, $id)
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
 
-        $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
+            $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 
-        if (!file_exists($studentFolderPath)) {
-            mkdir($studentFolderPath, 0755, true);
+            if (!file_exists($studentFolderPath)) {
+                mkdir($studentFolderPath, 0755, true);
+            }
+
+            $file->move($studentFolderPath, $fileName);
+
+            UploadedFile::create([
+                'student_id' => $student->id,
+                'file' => $fileName,
+            ]);
         }
-
-        $file->move($studentFolderPath, $fileName);
-
-        UploadedFile::create([
-            'student_id' => $student->id,
-            'file' => $fileName,
-        ]);
-    }
     }
     return redirect()->route('student.files', $id)->with('success', 'File uploaded successfully.');
 }
-
+public function addFileForm($id)
+{
+    $student = Student::findOrFail($id);
+    return view('encoder.add_file')->with('student', $student);
+}
 
 public function show ($id)
 {

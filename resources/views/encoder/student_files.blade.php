@@ -4,6 +4,11 @@
 
 @section('top-nav-links')
 @if (auth()->user()->role === 'encoder')
+
+<a href="{{ route('encoder.addFileForm', $student->id) }}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+    <i class="fa-solid fa-plus-circle mr-1"></i>Add File
+</a>
+
 <a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
          <i class="fa-solid fa-house-user mr-1"></i>Back to Home
     </a>
@@ -22,15 +27,6 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
-            @if (auth()->user()->role === 'encoder')
-            <div class="flex justify-end items-center mb-4">
-                <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-                    <button type="button" id="uploadButton" class="bg-blue-400 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Add Files</button>
-                </form>
-            </div>
-            @endif
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
                     <thead>
@@ -69,15 +65,4 @@
         </div>
     </div>
 </div>
-<script>
-document.getElementById('uploadButton').addEventListener('click', function() {
-    document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', function() {
-    if (this.value) {
-        document.getElementById('fileUploadForm').submit();
-    }
-});
-</script>
 @endsection

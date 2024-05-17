@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\ActivityLog;
 use App\Models\UploadedFile;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Services\ActivityLogService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -65,90 +66,86 @@ class EncoderController extends Controller
 
     public function store(Request $request)
 {
+    // Dynamic validation rules
+    $messages = [
+        'file.required' => 'You must upload at least one PDF file.',
+        'file.*.mimes' => 'Only PDF files are allowed.',
+        'file.*.max' => 'Each file may not be greater than 10MB.',
+    ];
     $validator = Validator::make($request->all(), [
-        'Name' => 'required|string',
+        'Name' => 'required|string|max:255',
         'BatchYear' => 'required|numeric',
         'type_of_student' => 'required|string|in:Undergraduate,Post Graduate',
+        'undergradCourses' => ['required_if:type_of_student,Undergraduate', Rule::requiredIf(function () use ($request) {
+            return $request->input('type_of_student') === 'Undergraduate';
+        })],
+        'postGradDegrees' => 'required_if:type_of_student,Post Graduate',
+        'mastersCourses' => 'required_if:postGradDegrees,Masters',
+        'doctorateCourses' => 'required_if:postGradDegrees,Doctorate',
+        'major' => 'required_if:undergradCourses,BS IN BUSINESS ADMINISTRATION|required_if:undergradCourses,BACHELOR OF SECONDARY EDUCATION',
+        'file' => 'required|array|min:1',
         'file.*' => 'required|file|max:10240|mimes:pdf',
-    ]);
+    ], $messages);
+
 
     if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
 
+    // Process course and major based on type of student
     $course = null;
     $major = null;
 
-    if ($request->input('type_of_student') === 'Undergraduate') {
-        $course = $request->input('undergradCourses');
-
-        if ($course) {
-            $major = $request->input('major');
-        }
-    } elseif ($request->input('type_of_student') === 'Post Graduate') {
-        $course = $request->input('postGradDegrees');
-
-        if ($course === 'Masters') {
-            $course = $request->input('mastersCourses');
-        } elseif ($course === 'Doctorate') {
-            $course = $request->input('doctorateCourses');
-        }
-
-        if ($course) {
-            $major = $request->input('major');
-        }
+    switch ($request->input('type_of_student')) {
+        case 'Undergraduate':
+            $course = $request->input('undergradCourses');
+            if ($course === 'BS IN BUSINESS ADMINISTRATION' || $course === 'BACHELOR OF SECONDARY EDUCATION') {
+                $major = $request->input('major');
+            }
+            break;
+        case 'Post Graduate':
+            $degree = $request->input('postGradDegrees');
+            $course = $degree === 'Masters' ? $request->input('mastersCourses') : $request->input('doctorateCourses');
+            if ($degree !== 'Masters' && $degree !== 'Doctorate') {
+                $major = $request->input('major');
+            }
+            break;
     }
 
     // Get current month name (e.g., January, February, etc.)
     $currentMonth = date('F');
 
+    // Update or create a student record
     $student = Student::updateOrCreate([
         'name' => $request->input('Name'),
         'batchyear' => $request->input('BatchYear'),
         'type_of_student' => $request->input('type_of_student'),
         'course' => $course,
         'major' => $major,
-        'month_uploaded' => $currentMonth, // Assign the current month
+        'month_uploaded' => $currentMonth,
     ]);
 
+    // Handle file uploads
     if ($request->hasFile('file')) {
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
 
-            $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/');
+        $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 
-            if (!file_exists($studentFolderPath)) {
-                mkdir($studentFolderPath, 0755, true);
-            }
+        if (!file_exists($studentFolderPath)) {
+            mkdir($studentFolderPath, 0755, true);
+        }
 
-            $file->move($studentFolderPath, $fileName);
+        $file->move($studentFolderPath, $fileName);
 
-            UploadedFile::create([
-                'student_id' => $student->id,
-                'file' => $fileName,
-            ]);
+        UploadedFile::create([
+            'student_id' => $student->id,
+            'file' => $fileName,
+        ]);
         }
     }
 
-    return redirect()->route('encoder.index')->with('success', 'Files uploaded successfully.');
-}
-
-
-public function show ($id)
-{
-    $student = Student::findOrFail($id);
-
-    return view('encoder.show', compact('student'));
-}
-
-public function destroy($id)
-{
-    $student = Student::findOrFail($id);
-    $student->delete(); 
-
-    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $student->name . ' (Batch Year: ' . $student->batchyear .')'  . ', ' . ' (Type of Student: '. $student->type_of_student . ')' . ', ' . ' (Course: '. $student->course . ')' . ', ' . ' (Major: '. $student->major . ')');
-
-    return redirect()->route('encoder.index')->with('success', 'Student deleted successfully.');
+    return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
 }
 
 public function addFileToStudent(Request $request, $id)
@@ -184,6 +181,24 @@ public function addFileToStudent(Request $request, $id)
     return redirect()->route('student.files', $id)->with('success', 'File uploaded successfully.');
 }
 
+
+public function show ($id)
+{
+    $student = Student::findOrFail($id);
+
+    return view('encoder.show', compact('student'));
+}
+
+public function destroy($id)
+{
+    $student = Student::findOrFail($id);
+    $student->delete(); 
+
+    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $student->name . ' (Batch Year: ' . $student->batchyear .')'  . ', ' . ' (Type of Student: '. $student->type_of_student . ')' . ', ' . ' (Course: '. $student->course . ')' . ', ' . ' (Major: '. $student->major . ')');
+
+    return redirect()->route('encoder.index')->with('success', 'Student deleted successfully.');
+}
+
 public function studentFiles($id)
 {
     $student = Student::findOrFail($id);
@@ -200,13 +215,11 @@ public function studentFiles($id)
 
 public function viewFile($id)
 {
-
     $file = UploadedFile::findOrFail($id);
-
     $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
 
     if (file_exists($filePath)) {
-        return response()->file($filePath);
+        return response()->file($filePath, ['Content-Type' => 'application/pdf']);
     } else {
         return back()->with('error', 'File not found.');
     }
@@ -216,9 +229,23 @@ public function deleteFile($id)
 {
     $file = UploadedFile::findOrFail($id);
 
+    // Get the file path
+    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+
+    // Check if the file exists in the file system
+    if (file_exists($filePath)) {
+        // If the file exists, delete it from the file system
+        unlink($filePath);
+    }
+
+    // Delete the file record from the database
     $file->delete();
 
-    return redirect()->back()->with('success', 'File record deleted successfully.');
+    // Get the updated list of files for the student
+    $updatedFiles = UploadedFile::withTrashed()->where('student_id', $file->student_id)->get();
+
+    // Redirect back to the student files page with the updated list of files
+    return redirect()->route('student.files', $file->student_id)->with(['success' => 'File record deleted successfully.', 'files' => $updatedFiles]);
 }
 
 public function confirmStudentDelete(Request $request)

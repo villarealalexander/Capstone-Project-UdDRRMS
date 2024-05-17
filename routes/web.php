@@ -48,7 +48,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
     
-    Route::delete('/delete-file/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
+    Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
     Route::get('encoder/confirm-student-delete', [EncoderController::class, 'confirmStudentDelete'])->name('encoder.confirm-student-delete');
     Route::post('/encoder/destroy-multiple', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
     
@@ -69,7 +69,7 @@ Route::middleware(['auth', 'CheckRole:viewer'])->group(function () {
 
 
 Route::middleware(['auth', 'CheckRole:encoder,viewer,admin'])->group(function () {
-    Route::get('/view-file/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
+    Route::get('/viewfile/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
     Route::get('/student/{id}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
 });
 

@@ -30,11 +30,9 @@ class EncoderController extends Controller
                       ->orWhere('type_of_student', 'LIKE', '%' . $searchQuery . '%');
     }
 
-    // Sorting logic based on 'month_uploaded' attribute
-    $sortField = $request->input('sort_field', 'name'); // Default sort by 'name'
-    $sortDirection = $request->input('sort_direction', 'asc'); // Default ascending order
+    $sortField = $request->input('sort_field', 'name');
+    $sortDirection = $request->input('sort_direction', 'asc');
 
-    // Custom sorting logic for 'month_uploaded'
     if ($sortField === 'month_uploaded') {
         $monthsOrder = [
             'January', 'February', 'March', 'April', 'May', 'June',
@@ -46,19 +44,23 @@ class EncoderController extends Controller
         $studentsQuery->orderBy($sortField, $sortDirection);
     }
 
-    // Retrieve all matching records without pagination
     $students = $studentsQuery->get();
 
-    // Pass sorting parameters to the view
     $sortParams = [
         'field' => $sortField,
         'direction' => $sortDirection,
     ];
-
-    // Return view without pagination
     return view('encoder.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
 }
 
+    public function show ($id)
+    {
+        $student = Student::findOrFail($id);
+
+        return view('encoder.show', compact('student'));
+    }
+
+//upload file area
     public function uploadfile()
     {
         return view('encoder.upload');
@@ -66,7 +68,6 @@ class EncoderController extends Controller
 
     public function store(Request $request)
 {
-    // Dynamic validation rules
     $messages = [
         'file.required' => 'You must upload at least one PDF file.',
         'file.*.mimes' => 'Only PDF files are allowed.',
@@ -91,8 +92,6 @@ class EncoderController extends Controller
     if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
-
-    // Process course and major based on type of student
     $course = null;
     $major = null;
 
@@ -111,11 +110,8 @@ class EncoderController extends Controller
             }
             break;
     }
-
-    // Get current month name (e.g., January, February, etc.)
     $currentMonth = date('F');
 
-    // Update or create a student record
     $student = Student::updateOrCreate([
         'name' => $request->input('Name'),
         'batchyear' => $request->input('BatchYear'),
@@ -125,7 +121,6 @@ class EncoderController extends Controller
         'month_uploaded' => $currentMonth,
     ]);
 
-    // Handle file uploads
     if ($request->hasFile('file')) {
         foreach ($request->file('file') as $file) {
             $fileName = $file->getClientOriginalName();
@@ -180,24 +175,9 @@ public function addFileToStudent(Request $request, $id)
     }
     return redirect()->route('student.files', $id)->with('success', 'File uploaded successfully.');
 }
+//end of upload file area
 
-public function show ($id)
-{
-    $student = Student::findOrFail($id);
-
-    return view('encoder.show', compact('student'));
-}
-
-public function destroy($id)
-{
-    $student = Student::findOrFail($id);
-    $student->delete(); 
-
-    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $student->name . ' (Batch Year: ' . $student->batchyear .')'  . ', ' . ' (Type of Student: '. $student->type_of_student . ')' . ', ' . ' (Course: '. $student->course . ')' . ', ' . ' (Major: '. $student->major . ')');
-
-    return redirect()->route('encoder.index')->with('success', 'Student deleted successfully.');
-}
-
+//view file area
 public function studentFiles($id)
 {
     $student = Student::findOrFail($id);
@@ -225,6 +205,19 @@ public function viewFile($id)
         return back()->with('error', 'File not found.');
     }
 }
+//end of view file area
+
+//delete file and delete student folder area
+public function confirmStudentDelete(Request $request)
+{
+    $selectedStudentIds = $request->input('selected_students', []);
+
+    if (empty($selectedStudentIds)) {
+        return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
+    }
+
+    return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
+}
 
 public function deleteFile($id)
 {
@@ -243,18 +236,6 @@ public function deleteFile($id)
 
     return redirect()->back()->with('success', 'File permanently deleted successfully.');
 }
-
-public function confirmStudentDelete(Request $request)
-{
-    $selectedStudentIds = $request->input('selected_students', []);
-
-    if (empty($selectedStudentIds)) {
-        return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
-    }
-
-    return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
-}
-
 public function destroyMultiple(Request $request)
 {
     $studentIds = $request->input('studentsToDelete', []);
@@ -264,7 +245,6 @@ public function destroyMultiple(Request $request)
         'encoder_password' => 'required|string',
     ]);
 
-    // Verify encoder password
     if (!Hash::check($encoderPassword, auth()->user()->password)) {
         return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
     }
@@ -275,14 +255,14 @@ public function destroyMultiple(Request $request)
         $student->uploadedFiles()->delete();
         $student->delete(); 
     }
-
-    // Log activity
     ActivityLogService::log('Delete folders', 'Deleted selected folders: ' . implode(', ', $studentIds));
 
     return redirect()->route('encoder.archives')->with('success', 'Selected folders and associated files soft deleted successfully.');
 }
+//end of delete file and delete student folder area
 
 
+//archive function area
 public function restore($id)
 {
     $restoredStudent = Student::onlyTrashed()->findOrFail($id);
@@ -300,14 +280,14 @@ public function restore($id)
     return redirect()->route('encoder.archives')->with('success', 'Student and associated files restored successfully.');
 }
 
-public function archives()
-{
+    public function archives()
+    {
 
-    $archivedStudents = Student::onlyTrashed()->get();
+        $archivedStudents = Student::onlyTrashed()->get();
 
-    ActivityLogService::log('View', 'Accessed archived students.');
+        ActivityLogService::log('View', 'Accessed archived students.');
 
-    return view('encoder.archives', compact('archivedStudents'));
-}
-    
+        return view('encoder.archives', compact('archivedStudents'));
+    }
+    //end of archive function area
 }

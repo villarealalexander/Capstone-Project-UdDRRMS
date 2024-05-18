@@ -49,12 +49,15 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
     
     Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
+    Route::delete('/deletefilePermanently/{id}', [EncoderController::class, 'deleteFilePermanently'])->name('deletefilePermanently');
     Route::get('encoder/confirm-student-delete', [EncoderController::class, 'confirmStudentDelete'])->name('encoder.confirm-student-delete');
     Route::post('/encoder/destroy-multiple', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
     
     Route::get('/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
     Route::get('/encoder/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
     Route::put('/archive/{id}/restore', [EncoderController::class, 'restore'])->name('encoder.restore');
+    Route::get('/encoder/{id}/archived-files', [EncoderController::class, 'showArchivedFiles'])->name('encoder.archived-files');
+    Route::put('/restorefile/{id}', [EncoderController::class, 'restoreFile'])->name('restorefile');
     
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });

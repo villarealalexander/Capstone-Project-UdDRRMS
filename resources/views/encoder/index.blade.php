@@ -11,7 +11,7 @@
     </form>
 
     <a href="{{ route('encoder.archives') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2" >
-        <i class="fas fa-archive"></i> Archive
+        <i class="fas fa-archive"></i> Archived Students
     </a>
 
     <a href="{{ route('encoder.upload') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">

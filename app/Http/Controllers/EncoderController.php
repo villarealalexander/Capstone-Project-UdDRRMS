@@ -215,10 +215,12 @@ public function studentFiles($id)
 public function viewFile($id)
 {
     $file = UploadedFile::findOrFail($id);
-    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+    $student = $file->student;
+    $filePath = 'uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file;
+    $fileUrl = asset($filePath);
 
-    if (file_exists($filePath)) {
-        return response()->file($filePath, ['Content-Type' => 'application/pdf']);
+    if (file_exists(public_path($filePath))) {
+        return view('viewfile', compact('fileUrl', 'student'));
     } else {
         return back()->with('error', 'File not found.');
     }

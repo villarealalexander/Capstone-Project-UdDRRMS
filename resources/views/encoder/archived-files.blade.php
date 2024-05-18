@@ -4,8 +4,8 @@
 
 @section('top-nav-links')
 
-<a href="{{ route('student.files', ['id' => $student->id]) }}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to {{ $student->name }}'s Files
+<a href="{{ route('student.files', ['id' => $student->id]) }}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-sm mx-2">
+<i class="fa-solid fa-rotate-left mr-1"></i>Back to {{ $student->name }}'s Files
     </a>
 @endsection
 
@@ -13,12 +13,12 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
-            <h1 class="text-2xl font-bold mb-4 mt-4">Archived Files - {{ $student->name }}</h1>
+            <h1 class="text-center text-2xl font-bold mb-4 mt-4">Archived Files - {{ $student->name }}</h1>
             @if (session('success'))
                 <div class="text-green-500 mr-2 mt-2 font-bold text-lg">{{ session('success') }}</div>
             @endif
             @if ($archivedFiles->isEmpty())
-                <p>No archived files found.</p>
+                <p class="text-center">No archived files found.</p>
             @else
                 <div class="overflow-x-auto">
                     <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
@@ -41,8 +41,15 @@
                                     <form action="{{ route('restorefile', $file->id) }}" method="POST" class="inline ml-2">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Restore</button>
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
+                                        <i class="fa-solid fa-trash-can-arrow-up mr-1"></i>Restore</button>
                                     </form>
+                                    <form action="{{ route('deletefilePermanently', $file->id) }}" method="POST" class="inline ml-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
+                                    <i class="fa-regular fa-circle-xmark mr-1"></i>Delete Permanently</button>
+                                </form>
                                 </td>
                             </tr>
                             @endforeach

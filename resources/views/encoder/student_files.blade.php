@@ -4,19 +4,26 @@
 
 @section('top-nav-links')
 @if (auth()->user()->role === 'encoder')
-<a href="{{route('encoder.archived-files', $student->id)}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Archived Files
+    <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
+        <button type="button" id="uploadButton" class="hover:bg-blue-500 px-10 rounded-lg text-white font-semibold text-md mx-2">
+        <i class="fa-solid fa-plus mr-1"></i>Add Files</button>
+    </form>
+
+    <a href="{{route('encoder.archived-files', $student->id)}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+         <i class="fa-solid fa-trash mr-1"></i>Archived Files
     </a>
 <a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+         <i class="fa-solid fa-house mr-1"></i>Back to Home
     </a>
 @elseif (auth()->user()->role === 'admin')
 <a href="{{route('admin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+         <i class="fa-solid fa-house mr-1"></i>Back to Home
     </a>
 @elseif (auth()->user()->role === 'viewer')
 <a href="{{route('viewer.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
+         <i class="fa-solid fa-house mr-1"></i>Back to Home
     </a>
 @endif
 @endsection
@@ -25,15 +32,11 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
-            @if (auth()->user()->role === 'encoder')
-            <div class="flex justify-end items-center mb-4">
-                <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-                    <button type="button" id="uploadButton" class="bg-blue-400 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-lg mr-2">Add Files</button>
-                </form>
+            <div>
+                @if (session('success'))
+                    <div class="text-green-500 mr-2 mt-1 font-bold text-lg">{{ session('success') }}</>
+                @endif
             </div>
-            @endif
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
                     <thead>
@@ -52,16 +55,19 @@
                                 </div>
                             </td>
                             <td class="py-2 px-4 border-b border-gray-300 text-center">
-                            <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">View</a>
+                            <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
+                            <i class="fa-solid fa-file-pdf mr-1"></i>View</a>
                                 @if (auth()->user()->role === 'encoder')
                                 <form action="{{ route('deletefile', $file->id) }}" method="POST" class="inline ml-2">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Delete</button>
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
+                                    <i class="fa-solid fa-trash mr-1"></i>Move to archive</button>
                                 </form>
                                 @endif
                                 @if (auth()->user()->role === 'admin')
-                                <a href="{{ route('downloadfile', $file->id) }}" class="bg-green-500 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">Download</a>
+                                <a href="{{ route('downloadfile', $file->id) }}" class="bg-green-500 hover:bg-green-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
+                                    <i class="fa-solid fa-download mr-1"></i>Download</a>
                                 @endif
                             </td>
                         </tr>

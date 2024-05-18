@@ -219,6 +219,21 @@ public function confirmStudentDelete(Request $request)
     return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
 }
 
+public function deleteFilePermanently($id)
+{
+    $file = UploadedFile::withTrashed()->findOrFail($id);
+
+    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
+    
+    if ($file->trashed()) {
+        $file->forceDelete();
+        unlink($filePath);
+    }
+
+    $file->forceDelete();
+
+    return redirect()->back()->with('success', 'File deleted permanently.');
+}
 public function deleteFile($id)
 {
     $file = UploadedFile::findOrFail($id);

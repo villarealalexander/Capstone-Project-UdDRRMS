@@ -52,8 +52,10 @@
                                 <td class="py-2 px-4 text-center border-gray-50">{{ $user->email }}</td>
                                 <td class="py-2 px-4 text-center border-gray-50">{{ $user->role }}</td>
                                 <td class="py-2 px-4 text-center">
-                                <a href="{{ route('superadmin.edit', $user->id) }}" class="text-white hover:bg-blue-800 bg-blue-500 rounded-md px-2">Edit</a>
-                                <a href="{{ route('superadmin.show', $user->id) }}" class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2">Show</a>
+                                <a href="{{ route('superadmin.edit', $user->id) }}" class="text-white hover:bg-blue-800 bg-blue-500 rounded-md px-2">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i>Edit</a>
+                                <a href="{{ route('superadmin.show', $user->id) }}" class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2">
+                                    <i class="fa-solid fa-eye mr-1"></i>Show</a>
 
                                 </td>
                             </tr>

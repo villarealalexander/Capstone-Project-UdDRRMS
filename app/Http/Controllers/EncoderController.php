@@ -184,7 +184,7 @@ public function studentFiles($id)
     $user = auth()->user();
 
     if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
-        $files = UploadedFile::withTrashed()->where('student_id', $student->id)->get();
+        $files = UploadedFile::where('student_id', $student->id)->withoutTrashed()->get();
 
         return view('encoder.student_files', compact('files', 'student'));
     } else {
@@ -223,18 +223,10 @@ public function deleteFile($id)
 {
     $file = UploadedFile::findOrFail($id);
 
-    $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
-
-    if (file_exists($filePath)) {
-        unlink($filePath);
-    }
-
     // Soft delete the file record
-    // $file->delete();
+    $file->delete();
 
-    $file->forceDelete();
-
-    return redirect()->back()->with('success', 'File permanently deleted successfully.');
+    return redirect()->back()->with('success', 'File archived successfully.');
 }
 public function destroyMultiple(Request $request)
 {
@@ -263,6 +255,24 @@ public function destroyMultiple(Request $request)
 
 
 //archive function area
+
+public function restoreFile($id)
+{
+    $file = UploadedFile::onlyTrashed()->findOrFail($id);
+
+    $file->restore();
+
+    return redirect()->back()->with('success', 'File restored successfully.');
+}
+
+public function showArchivedFiles($studentId)
+{
+    $student = Student::withTrashed()->findOrFail($studentId);
+    $archivedFiles = UploadedFile::onlyTrashed()->where('student_id', $studentId)->get();
+
+    return view('encoder.archived-files', compact('student', 'archivedFiles'));
+}
+
 public function restore($id)
 {
     $restoredStudent = Student::onlyTrashed()->findOrFail($id);

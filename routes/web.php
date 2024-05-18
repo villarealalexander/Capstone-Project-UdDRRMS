@@ -55,6 +55,8 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::get('/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
     Route::get('/encoder/archives', [EncoderController::class, 'archives'])->name('encoder.archives');
     Route::put('/archive/{id}/restore', [EncoderController::class, 'restore'])->name('encoder.restore');
+    Route::get('/encoder/{id}/archived-files', [EncoderController::class, 'showArchivedFiles'])->name('encoder.archived-files');
+    Route::put('/restorefile/{id}', [EncoderController::class, 'restoreFile'])->name('restorefile');
     
     Route::resource('encoder', EncoderController::class)->middleware(['auth', 'verified']);
 });

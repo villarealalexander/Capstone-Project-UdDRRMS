@@ -4,7 +4,7 @@
 
 @section('top-nav-links')
 <a href="{{ route('student.files', ['id' => $student->id]) }}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to Student Files
+         <i class="fa-solid fa-house mr-1"></i>Back to Student Files
     </a>
 @endsection
 

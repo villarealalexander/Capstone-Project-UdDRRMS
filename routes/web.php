@@ -6,6 +6,8 @@ use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\EncoderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SuperadminController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/', function () {
     return view('Login');
@@ -14,6 +16,11 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware(['auth', 'CheckRole:superadmin'])->group(function () {
     Route::get('/superadmin.index', [SuperadminController::class, 'index'])->name('superadmin');
@@ -75,7 +82,6 @@ Route::middleware(['auth', 'CheckRole:encoder,viewer,admin'])->group(function ()
     Route::get('/viewfile/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
     Route::get('/student/{id}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
 });
-
 
 
 

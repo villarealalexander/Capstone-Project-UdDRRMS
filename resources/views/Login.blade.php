@@ -10,7 +10,7 @@
 </head>
 <body class="font-poppins bg-gradient-to-r from-cyan-500 to-blue-500">
     <div class="flex justify-center items-center min-h-screen">
-        <div class="bg-blue-200 bg-opacity-60 p-8 rounded-xl shadow-2xl w-full sm:w-3/4 md:w-2/3 lg:w-2/4 xl:w-1/3 md:shrink-0">
+        <div class="bg-blue-200 bg-opacity-80 p-8 rounded-xl shadow-2xl w-full sm:w-3/4 md:w-2/3 lg:w-2/4 xl:w-1/3 md:shrink-0">
             <h1 class="text-3xl font-normal text-center mb-4">UdD Registrar Records Repository System</h1>
             <form action="{{ route('login') }}" method="POST" class="space-y-6" novalidate>
                 @csrf
@@ -36,7 +36,15 @@
                                 <div class="text-red-500 text-sm">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="text-left mb-2">
+                            <a href="{{ route('password.request') }}" class="text-sm text-blue-600 underline hover:text-gray-900">Forgot password?</a>
+                        </div>
                         <button type="submit" class="w-full h-10 bg-black rounded-md px-10 text-lg font-bold text-white">Login</button>
+                        @if (session('status'))
+                            <div class="alert alert-success text-green-600">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </form>

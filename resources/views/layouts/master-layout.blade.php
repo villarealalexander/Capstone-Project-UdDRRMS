@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - UdD Registrar Records Repository System</title>
+    <title>@yield('title') - UdD Registrar Records Repository Management System</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -18,7 +18,7 @@
             <div>
                 <div class="flex flex-col items-center">
                     <img class="w-20" src="{{ asset('images/UDD_LOGO.png') }}" alt="UdD Logo">
-                    <h1 class="text-md font-semibold text-white text-center mb-2 border-b-2 border-gray-400 shadow-md p-1 ">@yield('header-title', 'UdD Registrar Records Repository System')</h1>
+                    <h1 class="text-sm font-medium  text-white text-center mb-2 border-b-2 border-gray-400 shadow-md p-1 ">@yield('header-title', 'UdD Registrar Records Repository Management System')</h1>
                 </div>
                 <nav class="mt-4 space-y-6 text-center flex flex-col">
                     @yield('top-nav-links')

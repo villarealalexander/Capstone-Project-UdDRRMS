@@ -11,7 +11,7 @@
 <body class="font-poppins bg-gradient-to-r from-cyan-500 to-blue-500">
     <div class="flex justify-center items-center min-h-screen">
         <div class="bg-blue-200 bg-opacity-80 p-8 rounded-xl shadow-2xl w-full sm:w-3/4 md:w-2/3 lg:w-2/4 xl:w-1/3 md:shrink-0">
-            <h1 class="text-3xl font-normal text-center mb-4">UdD Registrar Records Repository System</h1>
+            <h1 class="text-2xl font-normal text-center mb-4">UdD Registrar Records Repository Management System</h1>
             <form action="{{ route('login') }}" method="POST" class="space-y-6" novalidate>
                 @csrf
                 <script src="resources/js/app.js"></script>

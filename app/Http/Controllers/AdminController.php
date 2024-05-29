@@ -63,8 +63,6 @@ class AdminController extends Controller
             $headers = [
                 'Content-Type' => 'application/pdf',
             ];
-
-            // Log the download action after the response is initiated
             $response = response()->download($filePath, $file->file, $headers);
             $response->send();
             ActivityLogService::log('Download', 'Downloaded a file from: ' . $student->name .' -> (Filename: ' . $file->file . ')');

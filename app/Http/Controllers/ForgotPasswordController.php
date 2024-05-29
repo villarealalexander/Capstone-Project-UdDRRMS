@@ -18,7 +18,6 @@ class ForgotPasswordController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        // Check if the user exists and their role
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
@@ -28,8 +27,7 @@ class ForgotPasswordController extends Controller
         if ($user->role !== 'superadmin') {
             return back()->withErrors(['email' => "Can't use reset password. Please contact your superadmin."]);
         }
-
-        // Send reset link if user is superadmin
+        
         $status = Password::sendResetLink(
             $request->only('email')
         );

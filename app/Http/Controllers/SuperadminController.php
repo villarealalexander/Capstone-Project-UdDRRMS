@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use App\Services\ActivityLogService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class SuperadminController extends Controller
@@ -73,7 +72,8 @@ class SuperadminController extends Controller
             'role' => $request->role,
         ]);
 
-        ActivityLogService::log('Create', 'Created a user: ' . "Name: " . $request->name . ' (Email: ' . $request->email . ') ' . ', ' . ' (Role: ' . $request->role . ')');
+        ActivityLogService::log('Create', 'Created a user: ' . "Name: " . $request->name 
+        . ' (Email: ' . $request->email . ') ' . ', ' . ' (Role: ' . $request->role . ')');
 
         return redirect()->back()->with('success', 'User created successfully.');
     }

@@ -3,12 +3,14 @@
 @section('title', 'Viewer Page')
 
 @section('top-nav-links')
-<form id="searchForm" action="{{ route('admin.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
+    <form id="searchForm" action="{{ route('admin.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
         <input type="text" name="query" id="search" class="w-full py-1 px-4 mx-auto bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
     </form>
 
     <script>
-        // Debounce function to delay the form submission
+        // Reference link
+        //Implemented a search debounce function similar to 
+        //this link https://www.freecodecamp.org/news/javascript-debounce-example/
         function debounce(func, delay) {
             let timeout;
             return function() {
@@ -16,8 +18,6 @@
                 timeout = setTimeout(func, delay);
             }
         }
-
-        // Function to submit the form using AJAX
         function submitForm() {
             const query = document.getElementById('search').value;
             const xhr = new XMLHttpRequest();
@@ -36,10 +36,8 @@
             xhr.send();
         }
 
-        // Debounced version of the submitForm function
         const debouncedSubmitForm = debounce(submitForm, 300);
 
-        // Add event listener to the search input field
         document.getElementById('search').addEventListener('input', debouncedSubmitForm);
     </script>
 @endsection
@@ -60,9 +58,9 @@
                                     Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
-                                            <i class="fas fa-arrow-up"></i> <!-- Ascending arrow -->
+                                            <i class="fas fa-arrow-up"></i> 
                                         @else
-                                            <i class="fas fa-arrow-down"></i> <!-- Descending arrow -->
+                                            <i class="fas fa-arrow-down"></i> 
                                         @endif
                                     @endif
                                 </a>
@@ -133,7 +131,7 @@
                                     @endif
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
+                                <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td>
                             </tr>
                         @endforeach
                     </tbody>

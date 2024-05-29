@@ -16,7 +16,9 @@
     </a>
 
     <script>
-        // Debounce function to delay the form submission
+        // Reference link
+        //Implemented a search debounce function similar to 
+        //this link https://www.freecodecamp.org/news/javascript-debounce-example/
         function debounce(func, delay) {
             let timeout;
             return function() {
@@ -24,8 +26,6 @@
                 timeout = setTimeout(func, delay);
             }
         }
-
-        // Function to submit the form using AJAX
         function submitForm() {
             const query = document.getElementById('search').value;
             const xhr = new XMLHttpRequest();
@@ -44,10 +44,8 @@
             xhr.send();
         }
 
-        // Debounced version of the submitForm function
         const debouncedSubmitForm = debounce(submitForm, 300);
 
-        // Add event listener to the search input field
         document.getElementById('search').addEventListener('input', debouncedSubmitForm);
     </script>
 @endsection

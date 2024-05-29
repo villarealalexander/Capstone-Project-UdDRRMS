@@ -61,7 +61,7 @@
                             <th class="px-2 py-2 border-gray-500 border-b-2">Masters/Doctorate</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">
                                 <a href="{{ route('admin.index', ['sort_field' => 'month_uploaded', 'sort_direction' => ($sortParams['field'] === 'month_uploaded' && $sortParams['direction'] === 'asc') ? 'desc' : 'asc']) }}">
-                                    Month 
+                                    Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
                                             <i class="fas fa-arrow-up"></i> <!-- Ascending arrow -->
@@ -78,15 +78,12 @@
                         @foreach($students as $student)
                             <tr>
                                 <td class="border px-2 py-2 text-center w-1/4">
-                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-start cursor-pointer">
-                                        <input type="checkbox" name="selected_students[]" value="{{ $student->id }}" class="w-6 h-6 mr-2 folderCheckbox align-middle">
-                                        <div class="border-l border-gray-400 pl-2">
-                                            <span class="text-black hover:underline">{{ $student->name }}</span>
-                                        </div>
+                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
+                                        {{ $student->name }}
                                     </a>
                                 </td>
     
-                                <td class="border px-2 py-2 text-left w-1/4">
+                                <td class="border px-2 py-2 text-center w-1/4">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
                                         {{ $student->batchyear }}
                                     </a>

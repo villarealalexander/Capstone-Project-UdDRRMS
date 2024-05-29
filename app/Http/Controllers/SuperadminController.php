@@ -13,7 +13,6 @@ class SuperadminController extends Controller
 {
     public function index()
     {
-
         $user = auth()->user();
         $role = $user->role;
         $name = $user->name;
@@ -27,21 +26,29 @@ class SuperadminController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
+        
+        ActivityLogService::log('View', "Viewed user profile: {$user->name} (ID: {$user->id})");
+
         return view('superadmin.show', compact('user'));
     }
+
     public function edit($id)
     {
         $user = User::findOrFail($id);
+        
+        ActivityLogService::log('Edit', "Accessed edit page for user: {$user->name} (ID: {$user->id})");
+
         return view('superadmin.edit', compact('user'));
     }
 
     public function create()
     {
+        ActivityLogService::log('View', 'Accessed create user page');
+
         return view('superadmin.create');
     }
 
-
-        public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -54,6 +61,8 @@ class SuperadminController extends Controller
         ]);
 
         if (!Hash::check($request->superadmin_password, auth()->user()->password)) {
+            ActivityLogService::log('Error', 'Failed to create user due to invalid superadmin password');
+
             return back()->withErrors(['superadmin_password' => 'Invalid superadmin password']);
         }
 
@@ -64,13 +73,10 @@ class SuperadminController extends Controller
             'role' => $request->role,
         ]);
 
-        ActivityLogService::log('Create', 'Create a user: ' ."Name: " . $request->name . ' (Email: ' . $request->email .') ' . ', ' . ' (Role: '. $request->role . ')');
+        ActivityLogService::log('Create', 'Created a user: ' . "Name: " . $request->name . ' (Email: ' . $request->email . ') ' . ', ' . ' (Role: ' . $request->role . ')');
 
         return redirect()->back()->with('success', 'User created successfully.');
     }
-
-
-
 
     public function update(Request $request, $id)
     {
@@ -122,30 +128,30 @@ class SuperadminController extends Controller
 
         if (!empty($changes)) {
             $changeText = implode(", ", $changes);
+            ActivityLogService::log('Update', "Updated user profile: {$user->name} (ID: {$user->id}), Changes: $changeText");
         }
-        ActivityLogService::log('Update', "Updated user profile: {$user->name} (ID: {$user->id}), Changes: $changeText");
 
         return redirect()->back()->with('success', 'User updated successfully.');
     }
 
-public function archives()
-{
-    $archivedUsers = User::onlyTrashed()->get();
+    public function archives()
+    {
+        $archivedUsers = User::onlyTrashed()->get();
 
-    ActivityLogService::log('View', 'Accessed archived users.');
+        ActivityLogService::log('View', 'Accessed archived users.');
 
-    return view('superadmin.archives', compact('archivedUsers'));
-}
+        return view('superadmin.archives', compact('archivedUsers'));
+    }
 
-public function restore($id)
-{
-    $user = User::onlyTrashed()->findOrFail($id);
-    $user->restore();
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
 
-    ActivityLogService::log('Restore', 'Restored a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
+        ActivityLogService::log('Restore', 'Restored a user: ' . $user->name . ' (Email: ' . $user->email . ') ' . ', ' . ' (Role: ' . $user->role . ')');
 
-    return redirect()->route('superadmin.archives')->with('success', 'User restored successfully.');
-}
+        return redirect()->route('superadmin.archives')->with('success', 'User restored successfully.');
+    }
 
     public function activityLogs()
     {
@@ -157,27 +163,31 @@ public function restore($id)
     }
 
     public function confirmDelete(Request $request)
-{
-    $selectedUserIds = $request->input('selected_users', []);
+    {
+        $selectedUserIds = $request->input('selected_users', []);
 
-    if (empty($selectedUserIds)) {
-        return redirect()->route('superadmin.index')->with('error', 'No users selected for deletion.');
+        if (empty($selectedUserIds)) {
+            ActivityLogService::log('Error', 'No users selected for deletion');
+
+            return redirect()->route('superadmin.index')->with('error', 'No users selected for deletion.');
+        }
+
+        ActivityLogService::log('View', 'Accessed confirm delete page for selected users: ' . implode(', ', $selectedUserIds));
+
+        return view('superadmin.confirm-delete', [
+            'userIds' => $selectedUserIds
+        ]);
     }
 
-    return view('superadmin.confirm-delete', [
-        'userIds' => $selectedUserIds
-    ]);
-}
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete(); 
 
-public function destroy($id)
-{
-    $user = User::findOrFail($id);
-    $user->delete(); 
+        ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email . ') ' . ', ' . ' (Role: ' . $user->role . ')');
 
-    ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email .')'  . ', ' . ' (Role: '. $user->role . ')');
-
-    return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
-}
+        return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
+    }
     
     public function destroyMultiple(Request $request)
     {
@@ -189,20 +199,21 @@ public function destroy($id)
         ]);
 
         if (!Hash::check($superadminPassword, auth()->user()->password)) {
+            ActivityLogService::log('Error', 'Failed to delete multiple users due to incorrect superadmin password');
+
             return redirect()->back()->with('error', 'Incorrect superadmin password.');
         }
     
         $deletedUsers = User::whereIn('id', $userIds)->delete();
     
         if ($deletedUsers > 0) {
-
             ActivityLogService::log('Delete users', 'Deleted selected users: ' . implode(', ', $userIds));
     
             return redirect()->route('superadmin.index')->with('success', 'Selected users deleted successfully.');
         } else {
+            ActivityLogService::log('Error', 'Failed to delete selected users: ' . implode(', ', $userIds));
+
             return redirect()->route('superadmin.index')->with('error', 'Failed to delete selected users.');
         }
     }
-
-    
 }

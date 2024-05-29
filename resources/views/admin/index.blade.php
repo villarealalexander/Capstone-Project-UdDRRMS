@@ -3,16 +3,49 @@
 @section('title', 'Admin Page')
 
 @section('top-nav-links')
-<form action="{{ route('encoder.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
+<form id="searchForm" action="{{ route('admin.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
         <input type="text" name="query" id="search" class="w-full py-1 px-4 mx-auto bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
-        <button type="submit" class="bg-gray-50 py-1 px-2">
-            <i class="fas fa-search text-black"></i>
-        </button>
     </form>
 
     <a href="{{ route('admin.activitylogs') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
         <i class="fas fa-clipboard-list"></i> Activity Logs
     </a>
+
+    <script>
+        // Debounce function to delay the form submission
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(func, delay);
+            }
+        }
+
+        // Function to submit the form using AJAX
+        function submitForm() {
+            const query = document.getElementById('search').value;
+            const xhr = new XMLHttpRequest();
+            const url = "{{ route('admin.index') }}?query=" + query;
+
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(xhr.responseText, 'text/html');
+                    const content = doc.querySelector('tbody').innerHTML;
+                    document.querySelector('tbody').innerHTML = content;
+                }
+            };
+            xhr.send();
+        }
+
+        // Debounced version of the submitForm function
+        const debouncedSubmitForm = debounce(submitForm, 300);
+
+        // Add event listener to the search input field
+        document.getElementById('search').addEventListener('input', debouncedSubmitForm);
+    </script>
 @endsection
 
 @section('content')

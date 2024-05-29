@@ -62,9 +62,9 @@
                                     Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
-                                            <i class="fas fa-arrow-up"></i> <!-- Ascending arrow -->
+                                            <i class="fas fa-arrow-up"></i>
                                         @else
-                                            <i class="fas fa-arrow-down"></i> <!-- Descending arrow -->
+                                            <i class="fas fa-arrow-down"></i>
                                         @endif
                                     @endif
                                 </a>
@@ -135,7 +135,7 @@
                                     @endif
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
+                                <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td>
                             </tr>
                         @endforeach
                     </tbody>

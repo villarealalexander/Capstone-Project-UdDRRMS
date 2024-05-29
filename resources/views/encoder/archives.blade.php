@@ -34,7 +34,7 @@
                                 <td class="border px-4 py-2">{{ $student->batchyear }}</td>
                                 <td class="border px-4 py-2">{{ $student->deleted_at }}</td>
                                 <td class="border px-4 py-2">
-                                    <!-- Restore student form -->
+                                    
                                     <form action="{{ route('encoder.restore', $student->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')

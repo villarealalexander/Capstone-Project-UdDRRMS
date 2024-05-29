@@ -29,6 +29,7 @@ function setupEmailValidation() {
     }
 }
 
+
 // Call setupEmailValidation function when the DOM content is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     setupEmailValidation(); // Initialize email validation

@@ -10,7 +10,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 sm:px-2">
-        <!-- Scrollable Container -->
         <div class="overflow-x-auto overflow-y-auto" style="max-height: 700px"> 
             <table class="min-w-full bg-white divide-y divide-gray-200 ">
                 <thead class="bg-gray-50 sticky top-0 ">

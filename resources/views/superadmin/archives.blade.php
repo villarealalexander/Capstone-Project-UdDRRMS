@@ -14,7 +14,6 @@
 
 @section('content')
     <div class="mx-auto flex flex-col items-center sm:w-11/12 md:w-4/5 lg:w-3/4 xl:w-5/6">
-        <!-- Container for the success message -->
         <div class="flex justify-center w-full my-2 h-2">
             @if (session('success'))
                 <div class="text-green-500 font-bold text-lg">{{ session('success') }}</div>

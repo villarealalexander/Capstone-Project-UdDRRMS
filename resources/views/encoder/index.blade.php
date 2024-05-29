@@ -75,9 +75,9 @@
                                     Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
-                                            <i class="fas fa-arrow-up"></i> <!-- Ascending arrow -->
+                                            <i class="fas fa-arrow-up"></i> 
                                         @else
-                                            <i class="fas fa-arrow-down"></i> <!-- Descending arrow -->
+                                            <i class="fas fa-arrow-down"></i> 
                                         @endif
                                     @endif
                                 </a>

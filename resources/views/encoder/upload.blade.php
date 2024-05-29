@@ -14,7 +14,6 @@
         @csrf
 
         <div class="flex justify-center items-center bg-white p-1 rounded-t-lg">
-            <img class="w-12 h-12 sm:w-20 sm:h-20" src="{{ asset('images/folder.png') }}" alt="Folder Icon">
             <h1 class="text-xl sm:text-3xl text-gray-600 font-bold mt-2 sm:mt-0 ml-4">Upload File</h1>
         </div>
         

@@ -284,7 +284,7 @@ class EncoderController extends Controller
             $student->delete();
         }
 
-        ActivityLogService::log('Delete', 'Deleted selected student folders: ' . implode(', ', $studentIds));
+        ActivityLogService::log('Delete', 'Archived selected student folders: ' . implode(', ', $studentIds));
 
         return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files soft deleted successfully.');
     }

@@ -34,3 +34,10 @@ function setupEmailValidation() {
 document.addEventListener('DOMContentLoaded', function () {
     setupEmailValidation(); // Initialize email validation
 });
+
+document.getElementById('selectAll').addEventListener('change', function() {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"][name="selected_users[]"]');
+    for (var checkbox of checkboxes) {
+        checkbox.checked = this.checked;
+    }
+});

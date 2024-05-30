@@ -18,7 +18,7 @@
             <div>
                 <div class="flex flex-col items-center">
                     <img class="w-20" src="{{ asset('images/UDD_LOGO.png') }}" alt="UdD Logo">
-                    <h1 class="text-sm font-medium  text-white text-center mb-2 border-b-2 border-gray-400 shadow-md p-1 ">@yield('header-title', 'UdD Registrar Records Repository Management System')</h1>
+                    <h1 class="text-sm font-medium  text-white text-center mb-2 border-b-2 border-gray-400 shadow-md p-1 ">@yield('header-title', 'UdD Registrar Repository Management System')</h1>
                 </div>
                 <nav class="mt-4 space-y-6 text-center flex flex-col">
                     @yield('top-nav-links')

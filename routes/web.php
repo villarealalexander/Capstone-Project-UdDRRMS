@@ -24,7 +24,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 Route::middleware(['auth', 'CheckRole:superadmin'])->group(function () {
     Route::get('/superadmin.index', [SuperadminController::class, 'index'])->name('superadmin');
-    Route::put('/superadmin/{id}', [SuperadminController::class, 'update'])->name('superadmin.update');
+    Route::put('/superadmin/update/{id}', [SuperadminController::class, 'update'])->name('superadmin.update');
     Route::post('/superadmin/create', [SuperadminController::class, 'store'])->name('superadmin.create');
 
     Route::get('superadmin/confirm-delete', [SuperadminController::class, 'confirmDelete'])->name('superadmin.confirm-delete');

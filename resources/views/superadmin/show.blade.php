@@ -1,32 +1,28 @@
-@extends('layouts.master-layout')
-
-@section('title', 'Show User')
-
-@section('top-nav-links')
-    <a href="{{route('superadmin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
-         <i class="fa-solid fa-house-user mr-1"></i>Back to Home
-    </a>
-@endsection
-
-@section('page-title')
-<i class="fa-solid fa-user"></i>Show User
-@endsection
-
-@section('content')
-<div class="mx-auto max-w-lg mt-10 rounded-lg">
-    <main>
-        <div class="bg-gray-50 rounded-md p-6">
-            <h2 class="text-2xl font-semibold mb-4">{{ $user->name }}</h2>
-            <p><strong>Name:</strong> {{ $user->name }}</p>
-            <p><strong>Email:</strong> {{ $user->email }}</p>
-            <p><strong>Role:</strong> {{ $user->role }}</p>
-            <p><strong>Created At:</strong> {{ $user->created_at->format('F j, Y \a\t g:i A') }}</p>
-            <div class = "flex justify-end items-center">
-            <a href = "{{route('superadmin.index')}}" class="mt-3 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 
-            bg-gray-50 text-base font-medium text-black hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
-            sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Back to home</a>
-            </div>
+<div id="showUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-3/4 md:w-1/2 lg:w-1/3">
+        <h2 class="text-2xl font-semibold mb-4">User Details</h2>
+        <div>
+            <p><strong>Name:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <p><strong>Role:</strong> <span id="userRole"></span></p>
+            <p><strong>Created At:</strong> <span id="userCreatedAt"></span></p>
         </div>
-    </main>
+        <div class="flex justify-end items-center mt-4">
+            <button type="button" id="closeShowUserModal" class="bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Close</button>
+        </div>
+    </div>
 </div>
-@endsection
+
+<script>
+    function showUserModal(user) {
+        document.getElementById('userName').innerText = user.name;
+        document.getElementById('userEmail').innerText = user.email;
+        document.getElementById('userRole').innerText = user.role;
+        document.getElementById('userCreatedAt').innerText = new Date(user.created_at).toLocaleString();
+        document.getElementById('showUserModal').classList.remove('hidden');
+    }
+
+    document.getElementById('closeShowUserModal').addEventListener('click', function() {
+        document.getElementById('showUserModal').classList.add('hidden');
+    });
+</script>

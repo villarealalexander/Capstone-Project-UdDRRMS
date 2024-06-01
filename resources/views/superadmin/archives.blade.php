@@ -24,9 +24,9 @@
             <table class="min-w-full mt-4 bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md rounded-md text-xl">
                 <thead class="bg-white sticky top-0">
                     <tr>
-                        <th class= "py-2 px-4 border-b text-black ">Name</th>
-                        <th class= "py-2 px-4 border-b text-black">Email</th>
-                        <th class= "py-2 px-4 border-b text-black">Actions</th>
+                        <th class= "py-1 px-4 border-b text-black ">Name</th>
+                        <th class= "py-1 px-4 border-b text-black">Email</th>
+                        <th class= "py-1 px-4 border-b text-black">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

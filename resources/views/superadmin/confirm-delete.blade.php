@@ -7,9 +7,6 @@
             <div class="mb-4">
                 <label for="superadmin_password" class="block text-sm font-medium text-gray-600">Superadmin Password:</label>
                 <input type="password" name="superadmin_password" id="superadmin_password" class="mt-1 p-2 w-full focus:outline-blue-400 border rounded-md" required>
-                @if(session('error'))
-                    <div class="text-red-500 ml-2 mt-2">{{ session('error') }}</div>
-                @endif
             </div>
             <div class="flex justify-start">
                 <button type="submit" class="w-auto h-auto text-lg bg-red-500 hover:bg-red-600 text-center text-white px-4 rounded-md focus:outline-none focus:shadow-outline">Confirm Delete</button>

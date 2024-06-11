@@ -13,7 +13,7 @@
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">
-            <h1 class="text-center text-2xl font-bold mb-4 mt-4">Archived Files - {{ $student->name }}</h1>
+            <h1 class="text-center text-2xl font-bold mb-4 ">Archived Files - {{ $student->name }}</h1>
             @if (session('success'))
                 <div class="text-green-500 mr-2 mt-2 font-bold text-lg">{{ session('success') }}</div>
             @endif

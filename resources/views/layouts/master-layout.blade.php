@@ -36,7 +36,7 @@
             <div class="bg-blue-200 shadow-lg rounded-lg min-w-full min-h-full">
                 @if(isset($role) && isset($name))
                     <div class="text-3xl text-center text-black font-bold mt-10">
-                        <i class="fa-solid fa-user mr-2"></i>Welcome {{ ucfirst($role) }}, {{ $name }}
+                        <i class="fa-solid fa-user mr-2"></i> {{ ucfirst($role) }}, {{ $name }}
                     </div>
                 @endif
 

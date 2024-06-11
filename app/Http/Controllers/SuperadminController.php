@@ -137,10 +137,12 @@ class SuperadminController extends Controller
     public function archives()
     {
         $archivedUsers = User::onlyTrashed()->get();
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
 
         ActivityLogService::log('View', 'Accessed archived users.');
 
-        return view('superadmin.archives', compact('archivedUsers'));
+        return view('superadmin.archives', compact('archivedUsers' , 'role', 'name'));
     }
 
     public function restore($id)
@@ -156,10 +158,12 @@ class SuperadminController extends Controller
     public function activityLogs()
     {
         $activityLogs = ActivityLog::with('user')->latest()->get();
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
 
         ActivityLogService::log('View', 'Viewed Activity Logs');
 
-        return view('superadmin.activitylogs', compact('activityLogs'));
+        return view('superadmin.activitylogs', compact('activityLogs', 'role', 'name'));
     }
 
     public function confirmDelete(Request $request)
@@ -167,9 +171,9 @@ class SuperadminController extends Controller
         $selectedUserIds = $request->input('selected_users', []);
 
         if (empty($selectedUserIds)) {
-            ActivityLogService::log('Error', 'No users selected for deletion');
+            ActivityLogService::log('Error', 'No users selected for arhive');
 
-            return redirect()->route('superadmin.index')->with('error', 'No users selected for deletion.');
+            return redirect()->route('superadmin.index')->with('error', 'No users selected for archive.');
         }
 
         ActivityLogService::log('View', 'Accessed confirm delete page for selected users: ' . implode(', ', $selectedUserIds));
@@ -177,16 +181,6 @@ class SuperadminController extends Controller
         return view('superadmin.confirm-delete', [
             'userIds' => $selectedUserIds
         ]);
-    }
-
-    public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-        $user->delete(); 
-
-        ActivityLogService::log('Delete', 'Soft deleted a user: ' . $user->name . ' (Email: ' . $user->email . ') ' . ', ' . ' (Role: ' . $user->role . ')');
-
-        return redirect()->route('superadmin.index')->with('success', 'User deleted successfully.');
     }
     
     public function destroyMultiple(Request $request)
@@ -199,7 +193,7 @@ class SuperadminController extends Controller
         ]);
 
         if (!Hash::check($superadminPassword, auth()->user()->password)) {
-            ActivityLogService::log('Error', 'Failed to delete multiple users due to incorrect superadmin password');
+            ActivityLogService::log('Error', 'Failed to archive multiple users due to incorrect superadmin password');
 
             return redirect()->back()->with('error', 'Incorrect superadmin password.');
         }
@@ -207,13 +201,13 @@ class SuperadminController extends Controller
         $deletedUsers = User::whereIn('id', $userIds)->delete();
     
         if ($deletedUsers > 0) {
-            ActivityLogService::log('Delete users', 'Deleted selected users: ' . implode(', ', $userIds));
+            ActivityLogService::log('Archive users', 'Archive selected users: ' . implode(', ', $userIds));
     
-            return redirect()->route('superadmin.index')->with('success', 'Selected users deleted successfully.');
+            return redirect()->route('superadmin.index')->with('success', 'Selected users archive successfully.');
         } else {
-            ActivityLogService::log('Error', 'Failed to delete selected users: ' . implode(', ', $userIds));
+            ActivityLogService::log('Error', 'Failed to archive selected users: ' . implode(', ', $userIds));
 
-            return redirect()->route('superadmin.index')->with('error', 'Failed to delete selected users.');
+            return redirect()->route('superadmin.index')->with('error', 'Failed to archive selected users.');
         }
     }
 }

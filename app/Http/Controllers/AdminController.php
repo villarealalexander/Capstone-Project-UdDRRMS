@@ -79,8 +79,11 @@ class AdminController extends Controller
             $query->whereNotIn('role', ['superadmin']);
         })->latest()->get();
         
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
+
         ActivityLogService::log('View', 'Viewed Activity Logs');
 
-        return view('admin.activitylogs', compact('activityLogs'));
+        return view('admin.activitylogs', compact('activityLogs', 'role', 'name'));
     }
 }

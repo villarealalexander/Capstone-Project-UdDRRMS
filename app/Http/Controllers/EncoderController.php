@@ -187,13 +187,15 @@ class EncoderController extends Controller
     {
         $student = Student::findOrFail($id);
         $user = auth()->user();
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
 
         if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
             $files = UploadedFile::where('student_id', $student->id)->withoutTrashed()->get();
 
             ActivityLogService::log('View', 'Viewed files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-            return view('encoder.student_files', compact('files', 'student'));
+            return view('encoder.student_files', compact('files', 'student' , 'role', 'name'));
         } else {
             return redirect()->route('home')->with('error', 'Unauthorized access.');
         }
@@ -222,10 +224,10 @@ class EncoderController extends Controller
         $selectedStudentIds = $request->input('selected_students', []);
 
         if (empty($selectedStudentIds)) {
-            return redirect()->route('encoder.index')->with('error', 'No folders selected for deletion.');
+            return redirect()->route('encoder.index')->with('error', 'No folders selected for archive.');
         }
 
-        ActivityLogService::log('View', 'Accessed confirm delete student folders page.');
+        ActivityLogService::log('View', 'Accessed confirm archive student folders page.');
 
         return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
     }
@@ -255,7 +257,7 @@ class EncoderController extends Controller
         // Soft delete the file record
         $file->delete();
 
-        ActivityLogService::log('Delete', 'Archived file: ' . $file->file . ' (ID: ' . $file->id . ') for student: ' . $file->student->name);
+        ActivityLogService::log('Archive', 'Archived file: ' . $file->file . ' (ID: ' . $file->id . ') for student: ' . $file->student->name);
 
         return redirect()->back()->with('success', 'File archived successfully.');
     }
@@ -280,9 +282,9 @@ class EncoderController extends Controller
             $student->delete();
         }
 
-        ActivityLogService::log('Delete', 'Archived selected student folders: ' . implode(', ', $studentIds));
+        ActivityLogService::log('Archive', 'Archived selected student folders: ' . implode(', ', $studentIds));
 
-        return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files soft deleted successfully.');
+        return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files archive successfully.');
     }
     // End of delete file and delete student folder area
 
@@ -302,10 +304,12 @@ class EncoderController extends Controller
     {
         $student = Student::withTrashed()->findOrFail($studentId);
         $archivedFiles = UploadedFile::onlyTrashed()->where('student_id', $studentId)->get();
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
 
         ActivityLogService::log('View', 'Viewed archived files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-        return view('encoder.archived-files', compact('student', 'archivedFiles'));
+        return view('encoder.archived-files', compact('student', 'archivedFiles', 'role', 'name'));
     }
 
     public function restore($id)
@@ -328,10 +332,12 @@ class EncoderController extends Controller
     public function archives()
     {
         $archivedStudents = Student::onlyTrashed()->get();
+        $role = auth()->user()->role;
+        $name = auth()->user()->name;
 
         ActivityLogService::log('View', 'Accessed archived students.');
 
-        return view('encoder.archives', compact('archivedStudents'));
+        return view('encoder.archives', compact('archivedStudents', 'role', 'name'));
     }
     // End of archive function area
 }

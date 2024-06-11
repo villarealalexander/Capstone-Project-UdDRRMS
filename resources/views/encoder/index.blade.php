@@ -68,7 +68,7 @@
 
             <div class="overflow-x-auto" style="height: 580px">
                 <table class="min-w-full bg-white text-lg mb-2">
-                    <thead class="bg-gray-200 sticky top-0">
+                    <thead class="bg-white sticky top-0">
                         <tr>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Name</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Batch Year</th>
@@ -90,7 +90,7 @@
                         </tr>
                     </thead>
 
-                    <tbody class="text-md">
+                    <tbody class="text-md bg-gray-50">
                         @foreach($students as $student)
                             <tr>
                                 <td class="border px-2 py-2 text-center w-1/4">

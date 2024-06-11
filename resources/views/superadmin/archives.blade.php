@@ -19,7 +19,9 @@
                 <div class="text-green-500 font-bold text-lg">{{ session('success') }}</div>
             @endif
         </div>
-
+    @if ($archivedUsers->isEmpty())
+        <p class="text-center mt-2">No archived users found.</p>
+    @else 
         <main class="w-full overflow-x-auto" style="max-height: 500px">
             <table class="min-w-full mt-4 bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md rounded-md text-xl">
                 <thead class="bg-white sticky top-0">
@@ -45,5 +47,6 @@
                 </tbody>
             </table>
         </main>
+    @endif
     </div>
 @endsection

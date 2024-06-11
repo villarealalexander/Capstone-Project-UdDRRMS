@@ -31,6 +31,7 @@
 @endsection
 
 @section('content')
+<h1 class="text-center text-xl font-bold mt-4">Student - {{ $student->name }}</h1>
 <div class="container mx-auto my-10">
     <div class="flex justify-center">
         <div class="w-full lg:w-1/2">

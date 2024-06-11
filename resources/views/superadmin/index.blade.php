@@ -29,9 +29,9 @@
                 @endif
             </div>
 
-            <main class="w-full overflow-x-auto" style="max-height: 550px">
-                <table class="min-w-full bg-gray-50 bg-opacity-30 border border-gray-300 shadow-md rounded-md text-xl">
-                    <thead class="bg-gray-50 sticky top-0 shadow-md">
+            <div class="overflow-x-auto" style="height: 550px">
+                <table class="min-w-full bg-transparent text-lg">
+                    <thead class="bg-white sticky top-0">
                         <tr>
                             <th class="py-2 px-2 border-b flex items-center">
                                 <input type="checkbox" id="selectAll" class="form-checkbox h-7 w-7 text-blue-500 mr-2">

@@ -11,9 +11,9 @@
         <i class="fas fa-archive"></i> Archived Students
     </a>
 
-    <a href="{{ route('encoder.upload') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
+    <button id="openModal" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
         <i class="fa-solid fa-upload mr-1"></i>Upload File
-    </a>
+    </button>
 
     <script>
         // Reference link
@@ -59,6 +59,10 @@
                 @if (session('success'))
                     <div class="text-green-500 ml-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
                 @endif
+
+                @if (session('error'))
+                    <div class="text-red-500 ml-2 mt-2 font-bold text-lg ">{{ session('error') }}</div>
+                @endif
             </div>
 
             <div class="overflow-x-auto" style="height: 580px">
@@ -97,13 +101,13 @@
                                     </a>
                                 </td>
     
-                                <td class="border px-2 py-2 text-left w-1/4">
+                                <td class="border px-2 py-2 text-left w-auto">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
                                         {{ $student->batchyear }}
                                     </a>
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/4">
+                                <td class="border px-2 py-2 text-center w-auto">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
                                         {{ $student->type_of_student }}
                                     </a>
@@ -151,7 +155,7 @@
                                     @endif
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
+                                <td class="border px-2 py-2 text-center w-1/5  ">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
                             </tr>
                         @endforeach
                     </tbody>
@@ -159,4 +163,7 @@
             </div>
         </form>
     </div>
+
+    @include('encoder.upload')
 @endsection
+

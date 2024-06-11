@@ -81,13 +81,13 @@
                                     </a>
                                 </td>
     
-                                <td class="border px-2 py-2 text-center w-1/4">
+                                <td class="border px-2 py-2 text-center w-auto">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
                                         {{ $student->batchyear }}
                                     </a>
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/4">
+                                <td class="border px-2 py-2 text-center w-auto">
                                     <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
                                         {{ $student->type_of_student }}
                                     </a>

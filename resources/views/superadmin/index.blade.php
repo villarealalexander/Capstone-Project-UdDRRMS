@@ -29,7 +29,7 @@
                 @endif
             </div>
 
-            <div class="overflow-x-auto" style="height: 550px">
+            <div class="overflow-x-auto overflow-y-auto" style="max-height: 550px">
                 <table class="min-w-full bg-transparent text-lg">
                     <thead class="bg-white sticky top-0">
                         <tr>

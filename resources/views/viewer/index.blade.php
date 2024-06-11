@@ -55,7 +55,7 @@
                             <th class="px-2 py-2 border-gray-500 border-b-2">Masters/Doctorate</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">
                                 <a href="{{ route('viewer.index', ['sort_field' => 'month_uploaded', 'sort_direction' => ($sortParams['field'] === 'month_uploaded' && $sortParams['direction'] === 'asc') ? 'desc' : 'asc']) }}">
-                                    Sort Month 
+                                <i class="fa-solid fa-sort mr-2"></i>Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
                                             <i class="fas fa-arrow-up"></i> 

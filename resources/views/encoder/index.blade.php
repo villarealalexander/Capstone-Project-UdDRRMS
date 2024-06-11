@@ -55,7 +55,8 @@
         <form id="deleteForm" action="{{ route('encoder.confirm-student-delete') }}" method="GET">
             @csrf
             <div class="flex justify-start items-center mb-2">
-                <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-lg">Delete Student Folder</button>
+            <button type="button" onclick="openDeleteModal()" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-lg">Archive Selected Students</button>
+
                 @if (session('success'))
                     <div class="text-green-500 ml-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
                 @endif
@@ -76,7 +77,7 @@
                             <th class="px-2 py-2 border-gray-500 border-b-2">Masters/Doctorate</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">
                                 <a href="{{ route('encoder.index', ['sort_field' => 'month_uploaded', 'sort_direction' => ($sortParams['field'] === 'month_uploaded' && $sortParams['direction'] === 'asc') ? 'desc' : 'asc']) }}">
-                                    Sort Month 
+                                <i class="fa-solid fa-sort mr-2"></i>Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
                                             <i class="fas fa-arrow-up"></i> 
@@ -165,5 +166,6 @@
     </div>
 
     @include('encoder.upload')
+    @include('encoder.confirm-student-delete')
 @endsection
 

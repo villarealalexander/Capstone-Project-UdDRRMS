@@ -10,7 +10,7 @@
         <i class="fas fa-clipboard-list"></i> Activity Logs
     </a>
     <a href="{{ route('superadmin.archives') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
-        <i class="fas fa-archive"></i> Archive Users
+        <i class="fas fa-archive"></i> Archived Users
     </a>
 @endsection
 
@@ -19,7 +19,7 @@
         <form id="deleteForm" class="w-full">
             @csrf
             <div class="flex justify-start my-2 items-center">
-                <button type="button" onclick="openDeleteModal()" class="px-2 py-2 bg-red-500 text-sm text-white rounded-lg hover:bg-red-600">Delete Selected</button>
+                <button type="button" onclick="openDeleteModal()" class="px-2 py-2 bg-red-500 text-sm text-white rounded-lg hover:bg-red-600">Archive Selected Users</button>
                 @if (session('error'))
                     <div class="ml-4 text-red-500">{{ session('error') }}</div>
                 @endif

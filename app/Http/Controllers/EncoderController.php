@@ -72,48 +72,43 @@ class EncoderController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $messages = [
-            'file.required' => 'You must upload at least one PDF file.',
-            'file.*.mimes' => 'Only PDF files are allowed.',
-            'file.*.max' => 'Each file may not be greater than 10MB.',
-        ];
-        $validator = Validator::make($request->all(), [
-            'Name' => 'required|string|max:255',
-            'BatchYear' => 'required|numeric',
-            'type_of_student' => 'required|string|in:Undergraduate,Post Graduate',
-            'undergradCourses' => ['required_if:type_of_student,Undergraduate', Rule::requiredIf(function () use ($request) {
-                return $request->input('type_of_student') === 'Undergraduate';
-            })],
-            'postGradDegrees' => 'required_if:type_of_student,Post Graduate',
-            'mastersCourses' => 'required_if:postGradDegrees,Masters',
-            'doctorateCourses' => 'required_if:postGradDegrees,Doctorate',
-            'major' => 'required_if:undergradCourses,BS IN BUSINESS ADMINISTRATION|required_if:undergradCourses,BACHELOR OF SECONDARY EDUCATION',
-            'file' => 'required|array|min:1',
-            'file.*' => 'required|file|max:10240|mimes:pdf',
-        ], $messages);
+{
+    $validator = Validator::make($request->all(), [
+        'Name' => 'required|string',
+        'BatchYear' => 'required|numeric',
+        'type_of_student' => 'required|string|in:Undergraduate,Post Graduate',
+        'file.*' => 'required|file|max:10240|mimes:pdf',
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-        $course = null;
-        $major = null;
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
 
-        switch ($request->input('type_of_student')) {
-            case 'Undergraduate':
-                $course = $request->input('undergradCourses');
-                if ($course === 'BS IN BUSINESS ADMINISTRATION' || $course === 'BACHELOR OF SECONDARY EDUCATION') {
-                    $major = $request->input('major');
-                }
-                break;
-            case 'Post Graduate':
-                $degree = $request->input('postGradDegrees');
-                $course = $degree === 'Masters' ? $request->input('mastersCourses') : $request->input('doctorateCourses');
-                if ($degree !== 'Masters' && $degree !== 'Doctorate') {
-                    $major = $request->input('major');
-                }
-                break;
+    $course = null;
+    $major = null;
+
+
+        
+    if ($request->input('type_of_student') === 'Undergraduate') {
+        $course = $request->input('undergradCourses');
+
+        // Set major based on selected course
+        if ($course) {
+            $major = $request->input('major'); // Use the selected major from dropdown
         }
+    } elseif ($request->input('type_of_student') === 'Post Graduate') {
+        $course = $request->input('postGradDegrees');
+        if ($course === 'Masters') {
+            $course = $request->input('mastersCourses');
+        } elseif ($course === 'Doctorate') {
+            $course = $request->input('doctorateCourses');
+        }
+        // Set major based on selected course
+        if ($course) {
+            $major = $request->input('major'); // Use the selected major from dropdown
+        }
+    }
+
         $currentMonth = date('F');
 
         $student = Student::updateOrCreate([
@@ -121,13 +116,14 @@ class EncoderController extends Controller
             'batchyear' => $request->input('BatchYear'),
             'type_of_student' => $request->input('type_of_student'),
             'course' => $course,
-            'major' => $major,
+            'major' => $major, // Store major in the database
             'month_uploaded' => $currentMonth,
         ]);
 
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
                 $fileName = $file->getClientOriginalName();
+    
 
                 $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 

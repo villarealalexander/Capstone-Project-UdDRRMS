@@ -250,6 +250,19 @@ class EncoderController extends Controller
         return redirect()->back()->with('success', 'File deleted permanently.');
     }
 
+    public function permanentDeleteStudent($id)
+{
+    $student = Student::withTrashed()->find($id);
+
+    if ($student) {
+        $student->forceDelete();
+        return redirect()->route('encoder.index')->with('success', 'Student permanently deleted successfully.');
+    } else {
+        return redirect()->route('encoder.index')->with('error', 'Student not found.');
+    }
+}
+
+
     public function deleteFile($id)
     {
         $file = UploadedFile::findOrFail($id);

@@ -66,7 +66,7 @@
                 @endif
             </div>
 
-            <div class="overflow-x-auto" style="height: 580px">
+            <div class="overflow-x-auto" style="height: 560px">
                 <table class="min-w-full bg-white text-lg mb-2">
                     <thead class="bg-white sticky top-0">
                         <tr>

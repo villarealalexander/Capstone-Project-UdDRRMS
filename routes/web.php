@@ -57,6 +57,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     
     Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
     Route::delete('/deletefilePermanently/{id}', [EncoderController::class, 'deleteFilePermanently'])->name('deletefilePermanently');
+    Route::delete('/encoder/permanent-delete/{id}', [EncoderController::class, 'permanentDeleteStudent'])->name('encoder.permanentDeleteStudent');
     Route::get('encoder/confirm-student-delete', [EncoderController::class, 'confirmStudentDelete'])->name('encoder.confirm-student-delete');
     Route::post('/encoder/destroy-multiple', [EncoderController::class, 'destroyMultiple'])->name('encoder.destroyMultiple');
     

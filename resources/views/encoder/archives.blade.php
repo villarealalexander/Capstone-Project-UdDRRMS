@@ -12,14 +12,17 @@
     <div class="container mx-auto text-center">
         <h1 class="text-2xl font-bold mb-4 mt-4">Archived Students</h1>
         @if (session('success'))
-                    <div class="text-green-500 mr-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
-                @endif
+            <div class="text-green-500 mr-2 mt-2 font-bold text-lg ">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="text-red-500 mr-2 mt-2 font-bold text-lg ">{{ session('error') }}</div>
+        @endif
         @if ($archivedStudents->isEmpty())
             <p>No archived students found.</p>
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full table-auto">
-                    <thead class = "border-b-2 border-gray-500 bg-gray-50">
+                    <thead class="border-b-2 border-gray-500 bg-gray-50">
                         <tr>
                             <th class="px-4 py-2">Name</th>
                             <th class="px-4 py-2">Batch Year</th>
@@ -34,11 +37,15 @@
                                 <td class="border px-4 py-2">{{ $student->batchyear }}</td>
                                 <td class="border px-4 py-2">{{ $student->deleted_at }}</td>
                                 <td class="border px-4 py-2">
-                                    
-                                    <form action="{{ route('encoder.restore', $student->id) }}" method="POST">
+                                    <form action="{{ route('encoder.restore', $student->id) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">Restore</button>
+                                    </form>
+                                    <form action="{{ route('encoder.permanentDeleteStudent', $student->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete Permanently</button>
                                     </form>
                                 </td>
                             </tr>

@@ -16,9 +16,6 @@
     </button>
 
     <script>
-        // Reference link
-        //Implemented a search debounce function similar to 
-        //this link https://www.freecodecamp.org/news/javascript-debounce-example/
         function debounce(func, delay) {
             let timeout;
             return function() {
@@ -87,6 +84,8 @@
                                     @endif
                                 </a>
                             </th>
+
+                            <th class="px-2 py-2 border-gray-500 border-b-2">Checklist</th>
                         </tr>
                     </thead>
 
@@ -156,7 +155,12 @@
                                     @endif
                                 </td>
 
-                                <td class="border px-2 py-2 text-center w-1/5  ">{{ $student->month_uploaded }}</td> <!-- Display Month Uploaded -->
+                                <td class="border px-2 py-2 text-center w-1/5  ">{{ $student->month_uploaded }}</td>
+                                <td class="border px-2 py-2 text-center w-1/5">
+                                <a href="{{ route('encoder.checklist', ['student_id' => $student->id]) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded" onclick="showChecklist({{ $student->id }})">
+                                    Show Checklist
+                                </a>
+                            </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -164,6 +168,8 @@
             </div>
         </form>
     </div>
+
+    
 
     @include('encoder.upload')
     @include('encoder.confirm-student-delete')

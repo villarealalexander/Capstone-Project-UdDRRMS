@@ -63,6 +63,28 @@ class EncoderController extends Controller
         return view('encoder.show', compact('student'));
     }
 
+    public function updateDescription(Request $request, UploadedFile $file)
+{
+    $file->update([
+        'description' => $request->description,
+    ]);
+
+    return back()->with('success', 'File description updated successfully.');
+}
+    public function checklist(Request $request)
+    {
+        ActivityLogService::log('View', 'Accessed the checklist page.');
+
+        // Get the student ID from the request
+        $studentId = $request->student_id;
+        
+        // Fetch the student and their uploaded files
+        $student = Student::with('uploadedFiles')->findOrFail($studentId);
+        $files = $student->uploadedFiles;
+
+        return view('encoder.checklist', compact('student', 'files'));
+    }
+
     // Upload file area
     public function uploadfile()
     {
@@ -77,7 +99,8 @@ class EncoderController extends Controller
         'Name' => 'required|string',
         'BatchYear' => 'required|numeric',
         'type_of_student' => 'required|string|in:Undergraduate,Post Graduate',
-        'file.*' => 'required|file|max:10240|mimes:pdf',
+        'files.*' => 'required|file|max:10240|mimes:pdf',
+        'descriptions.*' => 'required|string|max:255', // Adding validation for descriptions
     ]);
 
     if ($validator->fails()) {
@@ -87,8 +110,6 @@ class EncoderController extends Controller
     $course = null;
     $major = null;
 
-
-        
     if ($request->input('type_of_student') === 'Undergraduate') {
         $course = $request->input('undergradCourses');
 
@@ -109,41 +130,42 @@ class EncoderController extends Controller
         }
     }
 
-        $currentMonth = date('F');
+    $currentMonth = date('F');
 
-        $student = Student::updateOrCreate([
-            'name' => $request->input('Name'),
-            'batchyear' => $request->input('BatchYear'),
-            'type_of_student' => $request->input('type_of_student'),
-            'course' => $course,
-            'major' => $major, // Store major in the database
-            'month_uploaded' => $currentMonth,
-        ]);
+    $student = Student::updateOrCreate([
+        'name' => $request->input('Name'),
+        'batchyear' => $request->input('BatchYear'),
+        'type_of_student' => $request->input('type_of_student'),
+        'course' => $course,
+        'major' => $major, // Store major in the database
+        'month_uploaded' => $currentMonth,
+    ]);
 
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
-                $fileName = $file->getClientOriginalName();
-    
+    if ($request->hasFile('files')) {
+        foreach ($request->file('files') as $index => $file) {
+            $fileName = $file->getClientOriginalName();
+            $description = $request->input('descriptions')[$index] ?? '';
 
-                $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
+            $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
 
-                if (!file_exists($studentFolderPath)) {
-                    mkdir($studentFolderPath, 0755, true);
-                }
-
-                $file->move($studentFolderPath, $fileName);
-
-                UploadedFile::create([
-                    'student_id' => $student->id,
-                    'file' => $fileName,
-                ]);
+            if (!file_exists($studentFolderPath)) {
+                mkdir($studentFolderPath, 0755, true);
             }
+
+            $file->move($studentFolderPath, $fileName);
+
+            UploadedFile::create([
+                'student_id' => $student->id,
+                'file' => $fileName,
+                'description' => $description, // Store the description in the database
+            ]);
         }
-
-        ActivityLogService::log('Upload', 'Uploaded files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
-
-        return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
     }
+
+    ActivityLogService::log('Upload', 'Uploaded files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
+
+    return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
+}
 
     public function addFileToStudent(Request $request, $id)
     {

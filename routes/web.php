@@ -54,7 +54,9 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::get('/encoder/upload', [EncoderController::class, 'uploadfile'])->name('encoder.upload');
     Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
-    
+    Route::get('/encoder/checklist', [EncoderController::class, 'checklist'])->name('encoder.checklist');
+    Route::put('/encoder/updatedescription/{file}', [EncoderController::class, 'updateDescription'])->name('updatedescription');
+
     Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
     Route::delete('/deletefilePermanently/{id}', [EncoderController::class, 'deleteFilePermanently'])->name('deletefilePermanently');
     Route::delete('/encoder/permanent-delete/{id}', [EncoderController::class, 'permanentDeleteStudent'])->name('encoder.permanentDeleteStudent');

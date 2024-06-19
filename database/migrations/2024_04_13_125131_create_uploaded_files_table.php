@@ -13,6 +13,7 @@ class CreateUploadedFilesTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->string('file');
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->engine = 'InnoDB'; 
             $table->softDeletes();

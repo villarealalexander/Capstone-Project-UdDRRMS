@@ -37,13 +37,14 @@
         <div class="w-full lg:w-1/2">
             <div>
                 @if (session('success'))
-                    <div class="text-green-500 mr-2 mt-1 font-bold text-lg">{{ session('success') }}</>
+                    <div class="text-green-500 mr-2 mt-1 font-bold text-lg">{{ session('success') }}</div>
                 @endif
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full bg-white border-gray-300 rounded-lg shadow-md">
                     <thead>
                         <tr>
+                            <th class="py-2 px-4 bg-gray-100 border-b-2 text-gray-700 border-gray-300 text-center">Description</th>
                             <th class="py-2 px-4 bg-gray-100 border-b-2 text-gray-700 border-gray-300 text-center">File</th>
                             <th class="py-2 px-4 bg-gray-100 border-b-2 text-gray-700 border-gray-300 text-center">Actions</th>
                         </tr>
@@ -51,7 +52,19 @@
                     <tbody>
                         @foreach($files as $file)
                             <tr>
-                                <td class="py-1 px-4 border-b border-gray-300 w-1/2">
+                                <td class="py-1 px-4 border-b border-gray-300">
+                                    <div class="flex items-center justify-start p-1 border-r-2 mx-auto">
+                                        <form action="{{ route('updatedescription', $file->id) }}" method="POST" class="w-full">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="text" name="description" value="{{ $file->description }}" class="text-lg font-semibold ml-1 w-full border-gray-300 border rounded py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                            <button type="submit" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-3 rounded">
+                                                Save
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td class="py-1 px-4 border-b border-gray-300">
                                     <div class="flex items-center justify-start p-1 border-r-2 mx-auto">
                                         <img src="{{ asset('images/pdficon.png') }}" alt="PDF Icon" class="w-9 h-9">
                                         <span class="text-lg font-semibold ml-1">{{ $file->file }}</span>

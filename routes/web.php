@@ -75,7 +75,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
 
 Route::middleware(['auth', 'CheckRole:viewer'])->group(function () {
     Route::get('/viewer/index', [ViewerController::class, 'index'])->name('viewer');
-    
+    Route::get('/viewer/checklist', [ViewerController::class, 'checklist'])->name('viewer.checklist');
     Route::resource('viewer', ViewerController::class)->middleware(['auth', 'verified']);
 });
 
@@ -85,6 +85,7 @@ Route::middleware(['auth', 'CheckRole:encoder,viewer,admin'])->group(function ()
     Route::get('/viewfile/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
     Route::get('/student/{id}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
 });
+
 
 
 

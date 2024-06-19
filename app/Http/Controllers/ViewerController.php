@@ -50,4 +50,18 @@ class ViewerController extends Controller
         return view('viewer.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
     }
 
+    public function checklist(Request $request)
+    {
+        ActivityLogService::log('View', 'Accessed the checklist page.');
+
+        // Get the student ID from the request
+        $studentId = $request->student_id;
+        
+        // Fetch the student and their uploaded files
+        $student = Student::with('uploadedFiles')->findOrFail($studentId);
+        $files = $student->uploadedFiles;
+
+        return view('viewer.checklist', compact('student', 'files'));
+    }
+
 }

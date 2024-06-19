@@ -254,37 +254,6 @@ class EncoderController extends Controller
         return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
     }
 
-    public function deleteFilePermanently($id)
-    {
-        $file = UploadedFile::withTrashed()->findOrFail($id);
-
-        $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
-
-        if ($file->trashed()) {
-            $file->forceDelete();
-            unlink($filePath);
-        }
-
-        $file->forceDelete();
-
-        ActivityLogService::log('Delete', 'Permanently deleted file: ' . $file->file . ' (ID: ' . $file->id . ') for student: ' . $file->student->name);
-
-        return redirect()->back()->with('success', 'File deleted permanently.');
-    }
-
-    public function permanentDeleteStudent($id)
-{
-    $student = Student::withTrashed()->find($id);
-
-    if ($student) {
-        $student->forceDelete();
-        return redirect()->route('encoder.index')->with('success', 'Student permanently deleted successfully.');
-    } else {
-        return redirect()->route('encoder.index')->with('error', 'Student not found.');
-    }
-}
-
-
     public function deleteFile($id)
     {
         $file = UploadedFile::findOrFail($id);

@@ -26,7 +26,7 @@
                         <tr>
                             <th class="px-4 py-2">Name</th>
                             <th class="px-4 py-2">Batch Year</th>
-                            <th class="px-4 py-2">Deleted At</th>
+                            <th class="px-4 py-2">Archived At</th>
                             <th class="px-4 py-2">Actions</th>
                         </tr>
                     </thead>
@@ -41,11 +41,6 @@
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">Restore</button>
-                                    </form>
-                                    <form action="{{ route('encoder.permanentDeleteStudent', $student->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete Permanently</button>
                                     </form>
                                 </td>
                             </tr>

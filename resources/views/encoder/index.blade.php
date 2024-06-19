@@ -174,7 +174,7 @@
     <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold" id="checklistModalTitle"></h2>
-            <button class="text-gray-600 hover:text-gray-800 focus:outline-none" onclick="closeChecklistModal()">
+            <button class="text-gray-600 hover:text-gray-800 focus:outline-none" onclick="closeChecklistModal()">Close
                 <i class="fas fa-times"></i>
             </button>
         </div>

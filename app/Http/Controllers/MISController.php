@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\ActivityLogService;
 use Illuminate\Support\Facades\Hash;
 
-class SuperadminController extends Controller
+class MISController extends Controller
 {
     public function index()
     {
@@ -19,7 +19,7 @@ class SuperadminController extends Controller
         ActivityLogService::log('View', 'Viewed the list of users.');
 
         $users = User::all();
-        return view('superadmin.index', compact('users', 'role', 'name'));
+        return view('MIS.index', compact('users', 'role', 'name'));
     }
 
     public function show($id)
@@ -28,7 +28,7 @@ class SuperadminController extends Controller
         
         ActivityLogService::log('View', "Viewed user profile: {$user->name} (ID: {$user->id})");
 
-        return view('superadmin.show', compact('user'));
+        return view('MIS.show', compact('user'));
     }
 
     public function edit($id)
@@ -37,14 +37,14 @@ class SuperadminController extends Controller
         
         ActivityLogService::log('Edit', "Accessed edit page for user: {$user->name} (ID: {$user->id})");
 
-        return view('superadmin.edit', compact('user'));
+        return view('MIS.edit', compact('user'));
     }
 
     public function create()
     {
         ActivityLogService::log('View', 'Accessed create user page');
 
-        return view('superadmin.create');
+        return view('MIS.create');
     }
 
     public function store(Request $request)
@@ -53,16 +53,16 @@ class SuperadminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users|ends_with:cdd.edu.ph',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,viewer,encoder,superadmin',
-            'superadmin_password' => 'required|string',
+            'role' => 'required|string|in:HeadRegistrar,RegistrarStaff,Archiver,MIS',
+            'MIS_password' => 'required|string',
         ], [
             'email.ends_with' => 'The email must end with cdd.edu.ph domain.',
         ]);
 
-        if (!Hash::check($request->superadmin_password, auth()->user()->password)) {
-            ActivityLogService::log('Error', 'Failed to create user due to invalid superadmin password');
+        if (!Hash::check($request->MIS_password, auth()->user()->password)) {
+            ActivityLogService::log('Error', 'Failed to create user due to invalid MIS password');
 
-            return back()->withErrors(['superadmin_password' => 'Invalid superadmin password']);
+            return back()->withErrors(['MIS_password' => 'Invalid MIS password']);
         }
 
         User::create([
@@ -86,7 +86,7 @@ class SuperadminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id . '|ends_with:cdd.edu.ph',
             'password' => 'sometimes|nullable|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,viewer,encoder,superadmin',
+            'role' => 'required|string|in:HeadRegistrar,RegistrarStaff,Archiver,MIS',
         ], [
             'email.ends_with' => 'The email must end with cdd.edu.ph domain.',
         ]);
@@ -142,7 +142,7 @@ class SuperadminController extends Controller
 
         ActivityLogService::log('View', 'Accessed archived users.');
 
-        return view('superadmin.archives', compact('archivedUsers' , 'role', 'name'));
+        return view('MIS.archives', compact('archivedUsers' , 'role', 'name'));
     }
 
     public function restore($id)
@@ -152,7 +152,7 @@ class SuperadminController extends Controller
 
         ActivityLogService::log('Restore', 'Restored a user: ' . $user->name . ' (Email: ' . $user->email . ') ' . ', ' . ' (Role: ' . $user->role . ')');
 
-        return redirect()->route('superadmin.archives')->with('success', 'User restored successfully.');
+        return redirect()->route('MIS.archives')->with('success', 'User restored successfully.');
     }
 
     public function activityLogs()
@@ -163,7 +163,7 @@ class SuperadminController extends Controller
 
         ActivityLogService::log('View', 'Viewed Activity Logs');
 
-        return view('superadmin.activitylogs', compact('activityLogs', 'role', 'name'));
+        return view('MIS.activitylogs', compact('activityLogs', 'role', 'name'));
     }
 
     public function confirmDelete(Request $request)
@@ -173,12 +173,12 @@ class SuperadminController extends Controller
         if (empty($selectedUserIds)) {
             ActivityLogService::log('Error', 'No users selected for arhive');
 
-            return redirect()->route('superadmin.index')->with('error', 'No users selected for archive.');
+            return redirect()->route('MIS.index')->with('error', 'No users selected for archive.');
         }
 
         ActivityLogService::log('View', 'Accessed confirm delete page for selected users: ' . implode(', ', $selectedUserIds));
 
-        return view('superadmin.confirm-delete', [
+        return view('MIS.confirm-delete', [
             'userIds' => $selectedUserIds
         ]);
     }
@@ -186,16 +186,16 @@ class SuperadminController extends Controller
     public function destroyMultiple(Request $request)
     {
         $userIds = $request->input('usersToDelete', []);
-        $superadminPassword = $request->input('superadmin_password');
+        $MISPassword = $request->input('MIS_password');
  
         $validatedData = $request->validate([
-            'superadmin_password' => 'required|string',
+            'MIS_password' => 'required|string',
         ]);
 
-        if (!Hash::check($superadminPassword, auth()->user()->password)) {
-            ActivityLogService::log('Error', 'Failed to archive multiple users due to incorrect superadmin password');
+        if (!Hash::check($MISPassword, auth()->user()->password)) {
+            ActivityLogService::log('Error', 'Failed to archive multiple users due to incorrect MIS password');
 
-            return redirect()->back()->with('error', 'Incorrect superadmin password.');
+            return redirect()->back()->with('error', 'Incorrect MIS password.');
         }
     
         $deletedUsers = User::whereIn('id', $userIds)->delete();
@@ -203,11 +203,11 @@ class SuperadminController extends Controller
         if ($deletedUsers > 0) {
             ActivityLogService::log('Archive users', 'Archive selected users: ' . implode(', ', $userIds));
     
-            return redirect()->route('superadmin.index')->with('success', 'Selected users archive successfully.');
+            return redirect()->route('MIS.index')->with('success', 'Selected users archive successfully.');
         } else {
             ActivityLogService::log('Error', 'Failed to archive selected users: ' . implode(', ', $userIds));
 
-            return redirect()->route('superadmin.index')->with('error', 'Failed to archive selected users.');
+            return redirect()->route('MIS.index')->with('error', 'Failed to archive selected users.');
         }
     }
 }

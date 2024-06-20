@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\ActivityLog;
-use App\Models\UploadedFile;
 use Illuminate\Http\Request;
 use App\Services\ActivityLogService;
 
-class AdminController extends Controller
+class RegistrarStaffController extends Controller
 {
     public function index(Request $request)
     {
@@ -49,42 +47,7 @@ class AdminController extends Controller
 
         ActivityLogService::log('View', 'Viewed the list of students.');
 
-        return view('admin.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
-    }
-
-    public function downloadFile($id)
-    {
-        $file = UploadedFile::findOrFail($id);
-        $student = $file->student;
-
-        $filePath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file);
-
-        if (file_exists($filePath)) {
-            $headers = [
-                'Content-Type' => 'application/pdf',
-            ];
-            $response = response()->download($filePath, $file->file, $headers);
-            $response->send();
-            ActivityLogService::log('Download', 'Downloaded a file from: ' . $student->name .' -> (Filename: ' . $file->file . ')');
-
-            return $response;
-        } else {
-            return redirect()->back()->with('error', 'File not found.');
-        }
-    }
-
-        public function activityLogs()
-    {
-        $activityLogs = ActivityLog::whereHas('user', function ($query) {
-            $query->whereNotIn('role', ['superadmin']);
-        })->latest()->get();
-        
-        $role = auth()->user()->role;
-        $name = auth()->user()->name;
-
-        ActivityLogService::log('View', 'Viewed Activity Logs');
-
-        return view('admin.activitylogs', compact('activityLogs', 'role', 'name'));
+        return view('RegistrarStaff.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
     }
 
     public function checklist(Request $request)
@@ -98,6 +61,7 @@ class AdminController extends Controller
         $student = Student::with('uploadedFiles')->findOrFail($studentId);
         $files = $student->uploadedFiles;
 
-        return view('admin.checklist', compact('student', 'files'));
+        return view('RegistrarStaff.checklist', compact('student', 'files'));
     }
+
 }

@@ -10,7 +10,7 @@ use App\Services\ActivityLogService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class EncoderController extends Controller
+class ArchiverController extends Controller
 {
     public function index(Request $request)
     {
@@ -51,7 +51,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('View', 'Viewed the list of students.');
 
-        return view('encoder.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
+        return view('Archiver.index', compact('students', 'searchQuery', 'role', 'name', 'sortParams'));
     }
 
     public function show($id)
@@ -60,7 +60,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('View', 'Viewed student details: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-        return view('encoder.show', compact('student'));
+        return view('Archiver.show', compact('student'));
     }
 
     public function updateDescription(Request $request, UploadedFile $file)
@@ -82,7 +82,7 @@ class EncoderController extends Controller
         $student = Student::with('uploadedFiles')->findOrFail($studentId);
         $files = $student->uploadedFiles;
 
-        return view('encoder.checklist', compact('student', 'files'));
+        return view('Archiver.checklist', compact('student', 'files'));
     }
 
     // Upload file area
@@ -90,7 +90,7 @@ class EncoderController extends Controller
     {
         ActivityLogService::log('View', 'Accessed the upload file page.');
 
-        return view('encoder.upload');
+        return view('Archiver.upload');
     }
 
     public function store(Request $request)
@@ -164,7 +164,7 @@ class EncoderController extends Controller
 
     ActivityLogService::log('Upload', 'Uploaded files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-    return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
+    return redirect()->route('Archiver.index')->with('success', 'Student information and files uploaded successfully.');
 }
 
     public function addFileToStudent(Request $request, $id)
@@ -214,12 +214,12 @@ class EncoderController extends Controller
         $role = auth()->user()->role;
         $name = auth()->user()->name;
 
-        if ($user && in_array($user->role, ['encoder', 'viewer', 'admin'])) {
+        if ($user && in_array($user->role, ['Archiver', 'RegistrarStaff', 'HeadRegistrar'])) {
             $files = UploadedFile::where('student_id', $student->id)->withoutTrashed()->get();
 
             ActivityLogService::log('View', 'Viewed files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-            return view('encoder.student_files', compact('files', 'student' , 'role', 'name'));
+            return view('Archiver.student_files', compact('files', 'student' , 'role', 'name'));
         } else {
             return redirect()->route('home')->with('error', 'Unauthorized access.');
         }
@@ -248,12 +248,12 @@ class EncoderController extends Controller
         $selectedStudentIds = $request->input('selected_students', []);
 
         if (empty($selectedStudentIds)) {
-            return redirect()->route('encoder.index')->with('error', 'No folders selected for archive.');
+            return redirect()->route('Archiver.index')->with('error', 'No folders selected for archive.');
         }
 
         ActivityLogService::log('View', 'Accessed confirm archive student folders page.');
 
-        return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
+        return view('Archiver.confirm-student-delete', compact('selectedStudentIds'));
     }
 
     public function deleteFile($id)
@@ -271,14 +271,14 @@ class EncoderController extends Controller
     public function destroyMultiple(Request $request)
     {
         $studentIds = $request->input('studentsToDelete', []);
-        $encoderPassword = $request->input('encoder_password');
+        $ArchiverPassword = $request->input('Archiver_password');
 
         $validatedData = $request->validate([
-            'encoder_password' => 'required|string',
+            'Archiver_password' => 'required|string',
         ]);
 
-        if (!Hash::check($encoderPassword, auth()->user()->password)) {
-            return redirect()->back()->with('error', 'Incorrect encoder password. Please try again.');
+        if (!Hash::check($ArchiverPassword, auth()->user()->password)) {
+            return redirect()->back()->with('error', 'Incorrect Archiver password. Please try again.');
         }
 
         foreach ($studentIds as $studentId) {
@@ -290,7 +290,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('Archive', 'Archived selected student folders: ' . implode(', ', $studentIds));
 
-        return redirect()->route('encoder.index')->with('success', 'Selected folders and associated files archive successfully.');
+        return redirect()->route('Archiver.index')->with('success', 'Selected folders and associated files archive successfully.');
     }
     // End of delete file and delete student folder area
 
@@ -315,7 +315,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('View', 'Viewed archived files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
 
-        return view('encoder.archived-files', compact('student', 'archivedFiles', 'role', 'name'));
+        return view('Archiver.archived-files', compact('student', 'archivedFiles', 'role', 'name'));
     }
 
     public function restore($id)
@@ -332,7 +332,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('Restore', 'Restored student: ' . $restoredStudent->name . ' (ID: ' . $restoredStudent->id . ') and associated files.');
 
-        return redirect()->route('encoder.archives')->with('success', 'Student and associated files restored successfully.');
+        return redirect()->route('Archiver.archives')->with('success', 'Student and associated files restored successfully.');
     }
 
     public function archives()
@@ -343,7 +343,7 @@ class EncoderController extends Controller
 
         ActivityLogService::log('View', 'Accessed archived students.');
 
-        return view('encoder.archives', compact('archivedStudents', 'role', 'name'));
+        return view('Archiver.archives', compact('archivedStudents', 'role', 'name'));
     }
     // End of archive function area
 }

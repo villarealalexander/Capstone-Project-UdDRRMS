@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'viewer','encoder','superadmin'])->default('viewer');
+            $table->enum('role', ['HeadRegistrar', 'RegistrarStaff','Archiver','MIS'])->default('RegistrarStaff');
             $table->timestamps();
         });
 

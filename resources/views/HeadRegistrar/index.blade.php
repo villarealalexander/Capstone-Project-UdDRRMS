@@ -1,13 +1,20 @@
 @extends('layouts.master-layout')
 
-@section('title', 'Viewer Page')
+@section('title', 'HeadRegistrar Page')
 
 @section('top-nav-links')
-    <form id="searchForm" action="{{ route('admin.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
+<form id="searchForm" action="{{ route('HeadRegistrar.index') }}" method="GET" class="flex mx-2 items-center border border-white rounded-full overflow-hidden shadow-md">
         <input type="text" name="query" id="search" class="w-full py-1 px-4 mx-auto bg-white focus:outline-none text-black font-semibold" placeholder="Search..." value="{{ $searchQuery ?? '' }}" autocomplete="off">
     </form>
 
+    <a href="{{ route('HeadRegistrar.activitylogs') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
+        <i class="fas fa-clipboard-list"></i> Activity Logs
+    </a>
+
     <script>
+        // Reference link
+        //Implemented a search debounce function similar to 
+        //this link https://www.freecodecamp.org/news/javascript-debounce-example/
         function debounce(func, delay) {
             let timeout;
             return function() {
@@ -18,7 +25,7 @@
         function submitForm() {
             const query = document.getElementById('search').value;
             const xhr = new XMLHttpRequest();
-            const url = "{{ route('viewer.index') }}?query=" + query;
+            const url = "{{ route('HeadRegistrar.index') }}?query=" + query;
 
             xhr.open('GET', url, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -43,7 +50,7 @@
     <div class="w-full items-center mx-auto mt-4 md:w-[650px] lg:w-full">
             <div class="overflow-x-auto" style="height: 580px">
                 <table class="min-w-full bg-white text-lg mb-2">
-                    <thead class="bg-gray-200 sticky top-0">
+                    <thead class="bg-white sticky top-0">
                         <tr>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Name</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Batch Year</th>
@@ -51,28 +58,27 @@
                             <th class="px-2 py-2 border-gray-500 border-b-2">Degree</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">Masters/Doctorate</th>
                             <th class="px-2 py-2 border-gray-500 border-b-2">
-                                <a href="{{ route('viewer.index', ['sort_field' => 'month_uploaded', 'sort_direction' => ($sortParams['field'] === 'month_uploaded' && $sortParams['direction'] === 'asc') ? 'desc' : 'asc']) }}">
+                                <a href="{{ route('HeadRegistrar.index', ['sort_field' => 'month_uploaded', 'sort_direction' => ($sortParams['field'] === 'month_uploaded' && $sortParams['direction'] === 'asc') ? 'desc' : 'asc']) }}">
                                 <i class="fa-solid fa-sort mr-2"></i>Sort Month 
                                     @if ($sortParams['field'] === 'month_uploaded')
                                         @if ($sortParams['direction'] === 'asc')
-                                            <i class="fas fa-arrow-up"></i> 
+                                            <i class="fas fa-arrow-up"></i>
                                         @else
-                                            <i class="fas fa-arrow-down"></i> 
+                                            <i class="fas fa-arrow-down"></i>
                                         @endif
                                     @endif
                                 </a>
                             </th>
-
                             <th class="px-2 py-2 border-gray-500 border-b-2">Checklist</th>
                         </tr>
                     </thead>
 
-                    <tbody class="text-md">
+                    <tbody class="text-md bg-gray-50">
                         @foreach($students as $student)
                             <tr>
                                 <td class="border px-2 py-2 text-center w-1/4">
-                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">                                      
-                                           {{ $student->name }}
+                                    <a href="{{ route('student.files', ['id' => $student->id]) }}" class="flex items-center justify-center cursor-pointer hover:underline">
+                                        {{ $student->name }}
                                     </a>
                                 </td>
     
@@ -131,12 +137,13 @@
                                 </td>
 
                                 <td class="border px-2 py-2 text-center w-1/5">{{ $student->month_uploaded }}</td>
-                                <td class="border px-2 py-2 text-center w-1/2">
+
+                                <td class="border px-2 py-2 text-center w-1/5">
                                 <a href="#"  class="text-white hover:bg-orange-500 bg-orange-300 rounded-md px-2"
-                                    onclick="openChecklistModal('{{ $student->name }}', '{{ route('viewer.checklist', ['student_id' => $student->id]) }}')">
+                                    onclick="openChecklistModal('{{ $student->name }}', '{{ route('HeadRegistrar.checklist', ['student_id' => $student->id]) }}')">
                                         Checklist
                                 </a>
-                            </td>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

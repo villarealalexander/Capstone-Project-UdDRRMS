@@ -1,9 +1,9 @@
 @extends('layouts.master-layout')
 
-@section('title', 'Encoder Page')
+@section('title', 'Archiver Page')
 
 @section('top-nav-links')
-    <a href="{{route('encoder.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+    <a href="{{route('Archiver.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
          <i class="fa-solid fa-house mr-1"></i>Back to Home
     </a>
 @endsection
@@ -37,7 +37,7 @@
                                 <td class="border px-4 py-2">{{ $student->batchyear }}</td>
                                 <td class="border px-4 py-2">{{ $student->deleted_at }}</td>
                                 <td class="border px-4 py-2">
-                                    <form action="{{ route('encoder.restore', $student->id) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('Archiver.restore', $student->id) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">Restore</button>

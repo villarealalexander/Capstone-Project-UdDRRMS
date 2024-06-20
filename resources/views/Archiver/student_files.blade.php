@@ -3,24 +3,24 @@
 @section('title', 'Student Files - ' . $student->name)
 
 @section('top-nav-links')
-    @if (auth()->user()->role === 'encoder')
+    @if (auth()->user()->role === 'Archiver')
         <button type="button" id="openModalButton" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-plus mr-1"></i>Add Files
         </button>
 
-        <a href="{{ route('encoder.archived-files', $student->id) }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
+        <a href="{{ route('Archiver.archived-files', $student->id) }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-trash mr-1"></i>Archived Files
         </a>
 
-        <a href="{{ route('encoder.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
+        <a href="{{ route('Archiver.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-house mr-1"></i>Back to Home
         </a>
-    @elseif (auth()->user()->role === 'admin')
-        <a href="{{ route('admin.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
+    @elseif (auth()->user()->role === 'HeadRegistrar')
+        <a href="{{ route('HeadRegistrar.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-house mr-1"></i>Back to Home
         </a>
-    @elseif (auth()->user()->role === 'viewer')
-        <a href="{{ route('viewer.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
+    @elseif (auth()->user()->role === 'RegistrarStaff')
+        <a href="{{ route('RegistrarStaff.index') }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-house mr-1"></i>Back to Home
         </a>
     @endif
@@ -48,7 +48,7 @@
                                 <tr>
                                     <td class="flex justify-center py-4 px-4 border-b border-gray-300">
                                         <div class="flex items-center">
-                                            @if (auth()->user()->role === 'encoder')
+                                            @if (auth()->user()->role === 'Archiver')
                                                 <form action="{{ route('updatedescription', $file->id) }}" method="POST" class="flex items-center">
                                                     @csrf
                                                     @method('PUT')
@@ -75,7 +75,7 @@
                                         <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-lg text-sm mr-2">
                                             <i class="fa-solid fa-file-pdf mr-1"></i>View
                                         </a>
-                                        @if (auth()->user()->role === 'encoder')
+                                        @if (auth()->user()->role === 'Archiver')
                                             <form action="{{ route('deletefile', $file->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -83,7 +83,7 @@
                                                     <i class="fa-solid fa-trash mr-1"></i>Move to Archive
                                                 </button>
                                             </form>
-                                        @elseif (auth()->user()->role === 'admin')
+                                        @elseif (auth()->user()->role === 'HeadRegistrar')
                                             <a href="{{ route('downloadfile', $file->id) }}" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded-lg text-sm">
                                                 <i class="fa-solid fa-download mr-1"></i>Download
                                             </a>

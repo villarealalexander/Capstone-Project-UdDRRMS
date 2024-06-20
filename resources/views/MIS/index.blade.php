@@ -1,15 +1,15 @@
 @extends('layouts.master-layout')
 
-@section('title', 'Superadmin Page')
+@section('title', 'MIS Page')
 
 @section('top-nav-links')
     <a href="#" id="openCreateUserModal" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
         <i class="fas fa-user-plus"></i> Create User
     </a>
-    <a href="{{ route('superadmin.activitylogs') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
+    <a href="{{ route('MIS.activitylogs') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
         <i class="fas fa-clipboard-list"></i> Activity Logs
     </a>
-    <a href="{{ route('superadmin.archives') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
+    <a href="{{ route('MIS.archives') }}" class="hover:bg-blue-600 px-2 text-white py-1 rounded-lg font-semibold text-md mx-2">
         <i class="fas fa-archive"></i> Archived Users
     </a>
 @endsection
@@ -67,9 +67,9 @@
         </form>
     </div>
 
-    @include('superadmin.create')
-    @include('superadmin.show')
-    @include('superadmin.edit')
-    @include('superadmin.confirm-delete')
+    @include('MIS.create')
+    @include('MIS.show')
+    @include('MIS.edit')
+    @include('MIS.confirm-delete')
     
 @endsection

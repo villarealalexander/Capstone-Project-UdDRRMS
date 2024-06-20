@@ -3,7 +3,7 @@
 @section('title', 'Archived Users')
 
 @section('top-nav-links')
-    <a href="{{route('superadmin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+    <a href="{{route('MIS.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
          <i class="fa-solid fa-house-user mr-1"></i>Back to Home
     </a>
 @endsection
@@ -37,7 +37,7 @@
                             <td class="py-2 px-12 border-b">{{ $user->name }}</td>
                             <td class="text-center py-2 px-12 border-b">{{ $user->email }}</td>
                             <td class="py-2 px-12 border-b text-center">
-                                <form action="{{ route('superadmin.restore', $user->id) }}" method="POST">
+                                <form action="{{ route('MIS.restore', $user->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Restore</button>
                                 </form>

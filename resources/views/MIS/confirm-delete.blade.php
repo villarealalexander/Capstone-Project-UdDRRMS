@@ -1,12 +1,12 @@
 <div id="confirmDeleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm hidden flex justify-center items-center">
     <div class="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
         <h2 class="text-2xl font-semibold mb-4">Confirm User Archive</h2>
-        <form id="confirmDeleteForm" action="{{ route('superadmin.destroyMultiple') }}" method="POST">
+        <form id="confirmDeleteForm" action="{{ route('MIS.destroyMultiple') }}" method="POST">
             @csrf
             <div id="usersToDeleteContainer"></div>
             <div class="mb-4">
-                <label for="superadmin_password" class="block text-sm font-medium text-gray-600">Superadmin Password:</label>
-                <input type="password" name="superadmin_password" id="superadmin_password" class="mt-1 p-2 w-full focus:outline-blue-400 border rounded-md" required>
+                <label for="MIS_password" class="block text-sm font-medium text-gray-600">MIS Password:</label>
+                <input type="password" name="MIS_password" id="MIS_password" class="mt-1 p-2 w-full focus:outline-blue-400 border rounded-md" required>
             </div>
             <div class="flex justify-start">
                 <button type="submit" class="w-auto h-auto text-lg bg-red-500 hover:bg-red-600 text-center text-white px-4 rounded-md focus:outline-none focus:shadow-outline">Confirm Archive</button>

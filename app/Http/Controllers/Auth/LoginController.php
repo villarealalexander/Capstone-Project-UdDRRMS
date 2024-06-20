@@ -29,14 +29,14 @@ class LoginController extends Controller
         ActivityLogService::log('Logged in.', 'User logged in successfully.');
 
         switch (auth()->user()->role) {
-            case 'superadmin':
-                return redirect()->route('superadmin');
-            case 'admin':
-                return redirect()->route('admin');
-            case 'encoder':
-                return redirect()->route('encoder');
-            case 'viewer':
-                return redirect()->route('viewer');
+            case 'MIS':
+                return redirect()->route('MIS');
+            case 'HeadRegistrar':
+                return redirect()->route('HeadRegistrar');
+            case 'Archiver':
+                return redirect()->route('Archiver');
+            case 'RegistrarStaff':
+                return redirect()->route('RegistrarStaff');
             default:
                 return redirect()->intended('/');
         }

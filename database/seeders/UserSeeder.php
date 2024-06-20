@@ -18,55 +18,55 @@ class UserSeeder extends Seeder
             'name' => 'MIS office',
             'email' => 'misoffice@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'superadmin',
+            'role' => 'MIS',
         ]);
         User::create([
             'name' => 'Head Registrar',
             'email' => 'headregistrar@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'admin',
+            'role' => 'HeadRegistrar',
         ]);
 
         User::create([
             'name' => 'Registrar Staff',
             'email' => 'registrar1@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'viewer',
+            'role' => 'RegistrarStaff',
         ]);
 
         User::create([
             'name' => 'Registrar Staff',
             'email' => 'registrar2@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'viewer',
+            'role' => 'RegistrarStaff',
         ]);
 
         User::create([
             'name' => 'Registrar Staff',
             'email' => 'registrar3@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'viewer',
+            'role' => 'RegistrarStaff',
         ]);
 
         User::create([
             'name' => 'Registrar Staff',
             'email' => 'registrar4@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'viewer',
+            'role' => 'RegistrarStaff',
         ]);
 
         User::create([
             'name' => 'Registrar Staff',
             'email' => 'registrar5@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'viewer',
+            'role' => 'RegistrarStaff',
         ]);
 
         User::create([
             'name' => 'Archival Office',
             'email' => 'archival@cdd.edu.ph',
             'password' => Hash::make('password'),
-            'role' => 'encoder',
+            'role' => 'Archiver',
         ]);
 
 }

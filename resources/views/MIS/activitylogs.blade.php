@@ -3,7 +3,7 @@
 @section('title', 'Activity Logs')
 
 @section('top-nav-links')
-    <a href="{{route('superadmin.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
+    <a href="{{route('MIS.index')}}" class="hover:bg-blue-500 px-2 rounded-lg text-white font-semibold text-md mx-2">
          <i class="fa-solid fa-house-user mr-1"></i>Back to Home
     </a>
 @endsection

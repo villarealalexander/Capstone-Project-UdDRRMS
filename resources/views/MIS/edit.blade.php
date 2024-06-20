@@ -8,10 +8,10 @@
             <div class="mb-4">
                 <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                 <select name="role" id="editRole" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
-                    <option value="admin">Admin</option>
-                    <option value="viewer">Viewer</option>
-                    <option value="encoder">Encoder</option>
-                    <option value="superadmin">Superadmin</option>
+                    <option value="HeadRegistrar">HeadRegistrar</option>
+                    <option value="RegistrarStaff">RegistrarStaff</option>
+                    <option value="Archiver">Archiver</option>
+                    <option value="MIS">MIS</option>
                 </select>
             </div>
 
@@ -37,8 +37,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="superadmin_password" class="block text-sm font-medium text-gray-700">Superadmin Password</label>
-                <input type="password" name="superadmin_password" id="editSuperadminPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                <label for="MIS_password" class="block text-sm font-medium text-gray-700">MIS Password</label>
+                <input type="password" name="MIS_password" id="editMISPassword" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
             </div>
 
             <div class="flex justify-start items-center">
@@ -52,7 +52,7 @@
 <script>
     function openEditUserModal(user) {
         const form = document.getElementById('editUserForm');
-        form.action = `{{ url('superadmin/update') }}/${user.id}`;
+        form.action = `{{ url('MIS/update') }}/${user.id}`;
         document.getElementById('editRole').value = user.role;
         document.getElementById('editName').value = user.name;
         document.getElementById('editEmail').value = user.email;

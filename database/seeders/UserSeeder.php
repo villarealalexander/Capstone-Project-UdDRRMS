@@ -15,73 +15,59 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'Alexander',
-            'email' => 'alex@cdd.edu.ph',
-            'password' => Hash::make('123456'),
+            'name' => 'MIS office',
+            'email' => 'misoffice@cdd.edu.ph',
+            'password' => Hash::make('password'),
             'role' => 'superadmin',
         ]);
         User::create([
-            'name' => 'Admin',
-            'email' => 'admin@cdd.edu.ph',
+            'name' => 'Head Registrar',
+            'email' => 'headregistrar@cdd.edu.ph',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
 
         User::create([
-            'name' => 'Viewer',
-            'email' => 'viewer@cdd.edu.ph',
+            'name' => 'Registrar Staff',
+            'email' => 'registrar1@cdd.edu.ph',
             'password' => Hash::make('password'),
             'role' => 'viewer',
         ]);
 
         User::create([
-            'name' => 'Encoder',
-            'email' => 'encoder@cdd.edu.ph',
+            'name' => 'Registrar Staff',
+            'email' => 'registrar2@cdd.edu.ph',
+            'password' => Hash::make('password'),
+            'role' => 'viewer',
+        ]);
+
+        User::create([
+            'name' => 'Registrar Staff',
+            'email' => 'registrar3@cdd.edu.ph',
+            'password' => Hash::make('password'),
+            'role' => 'viewer',
+        ]);
+
+        User::create([
+            'name' => 'Registrar Staff',
+            'email' => 'registrar4@cdd.edu.ph',
+            'password' => Hash::make('password'),
+            'role' => 'viewer',
+        ]);
+
+        User::create([
+            'name' => 'Registrar Staff',
+            'email' => 'registrar5@cdd.edu.ph',
+            'password' => Hash::make('password'),
+            'role' => 'viewer',
+        ]);
+
+        User::create([
+            'name' => 'Archival Office',
+            'email' => 'archival@cdd.edu.ph',
             'password' => Hash::make('password'),
             'role' => 'encoder',
         ]);
 
-        // Additional users
-        User::create([
-            'name' => 'Manager',
-            'email' => 'manager@cdd.edu.ph',
-            'password' => Hash::make('manager123'),
-            'role' => 'admin',
-        ]);
-
-        User::create([
-            'name' => 'Assistant',
-            'email' => 'assistant@cdd.edu.ph',
-            'password' => Hash::make('assistant123'),
-            'role' => 'viewer',
-        ]);
-
-        User::create([
-            'name' => 'Technician',
-            'email' => 'tech@cdd.edu.ph',
-            'password' => Hash::make('technician123'),
-            'role' => 'encoder',
-        ]);
-
-        User::create([
-            'name' => 'Clerk',
-            'email' => 'clerk@cdd.edu.ph',
-            'password' => Hash::make('clerk123'),
-            'role' => 'encoder',
-        ]);
-
-        User::create([
-            'name' => 'Developer',
-            'email' => 'developer@cdd.edu.ph',
-            'password' => Hash::make('dev123'),
-            'role' => 'admin',
-        ]);
-
-        User::create([
-            'name' => 'Consultant',
-            'email' => 'consultant@cdd.edu.ph',
-            'password' => Hash::make('consultant123'),
-            'role' => 'viewer',
-        ]);
 }
 }

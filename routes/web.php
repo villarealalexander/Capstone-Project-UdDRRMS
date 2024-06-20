@@ -43,7 +43,7 @@ Route::middleware(['auth', 'CheckRole:admin'])->group(function () {
     Route::get('/admin/activitylogs', [AdminController::class, 'activityLogs'])->name('admin.activitylogs');
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin');
     Route::get('download-file/{id}', [AdminController::class, 'downloadFile'])->name('downloadfile');
-
+    Route::get('/admin/checklist', [AdminController::class, 'checklist'])->name('admin.checklist');
     Route::resource('admin', AdminController::class)->middleware(['auth', 'verified']);
 });
 

@@ -86,4 +86,18 @@ class AdminController extends Controller
 
         return view('admin.activitylogs', compact('activityLogs', 'role', 'name'));
     }
+
+    public function checklist(Request $request)
+    {
+        ActivityLogService::log('View', 'Accessed the checklist page.');
+
+        // Get the student ID from the request
+        $studentId = $request->student_id;
+        
+        // Fetch the student and their uploaded files
+        $student = Student::with('uploadedFiles')->findOrFail($studentId);
+        $files = $student->uploadedFiles;
+
+        return view('admin.checklist', compact('student', 'files'));
+    }
 }

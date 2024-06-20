@@ -4,13 +4,9 @@
 
 @section('top-nav-links')
     @if (auth()->user()->role === 'encoder')
-        <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <input type="file" name="file[]" id="fileInput" style="display: none;" multiple required>
-            <button type="button" id="uploadButton" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
-                <i class="fa-solid fa-plus mr-1"></i>Add Files
-            </button>
-        </form>
+        <button type="button" id="openModalButton" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
+            <i class="fa-solid fa-plus mr-1"></i>Add Files
+        </button>
 
         <a href="{{ route('encoder.archived-files', $student->id) }}" class="hover:bg-blue-500 px-4 rounded-lg text-white font-semibold text-md mx-2">
             <i class="fa-solid fa-trash mr-1"></i>Archived Files
@@ -38,9 +34,9 @@
                 @if (session('success'))
                     <div class="text-green-500 mr-2 mt-1 font-bold text-lg">{{ session('success') }}</div>
                 @endif
-                <div class="overflow-x-auto">
-                    <table class="w-full bg-white border-2 border-gray-300 rounded-lg shadow-md">
-                        <thead>
+                <div class="overflow-x-auto" style="max-height: 530px">
+                    <table class="w-full bg-gray-200 border-2 border-gray-300 rounded-lg shadow-md">
+                        <thead class="sticky top-0">
                             <tr class="bg-gray-100">
                                 <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-center">Description</th>
                                 <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-center">File</th>
@@ -102,16 +98,46 @@
         </div>
     </div>
 
-    <!-- JavaScript to trigger file input on button click -->
-    <script>
-        document.getElementById('uploadButton').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden backdrop-blur-sm">
+        <div class="bg-white shadow-lg rounded-lg w-full max-w-md p-8 sm:max-w-md md:max-w-sm xl:max-w-md">
+            <div class="flex justify-between items-center bg-white p-1 rounded-t-lg">
+                <h1 class="text-xl sm:text-3xl text-gray-600 font-bold mt-2 sm:mt-0 ml-4">Upload File</h1>
+                <button id="closeModalButton" class="text-gray-600 hover:text-gray-900 text-lg">&times;</button>
+            </div>
 
-        document.getElementById('fileInput').addEventListener('change', function() {
-            if (this.value) {
-                document.getElementById('fileUploadForm').submit();
-            }
+            <form id="fileUploadForm" action="{{ route('student.addfile', $student->id) }}" method="POST" enctype="multipart/form-data" class="px-5 py-4">
+                @csrf
+                <div class="mb-4">
+                    <label for="description" class="block text-gray-700 text-sm sm:text-base">Description:</label>
+                    <input type="text" name="description" id="description" placeholder="Enter file description" class="border-2 border-gray-500 p-1 focus:outline-blue-400 rounded-md form-input w-full" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="file" class="block text-gray-700 text-sm sm:text-base">Choose File:</label>
+                    <input type="file" name="file[]" id="file" class="border-2 border-gray-500 p-1 focus:outline-blue-400 rounded-md form-input w-full" required>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle modal operations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openModalButton = document.getElementById('openModalButton');
+            const closeModalButton = document.getElementById('closeModalButton');
+            const uploadModal = document.getElementById('uploadModal');
+
+            openModalButton.addEventListener('click', () => {
+                uploadModal.classList.remove('hidden');
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                uploadModal.classList.add('hidden');
+            });
         });
     </script>
 @endsection

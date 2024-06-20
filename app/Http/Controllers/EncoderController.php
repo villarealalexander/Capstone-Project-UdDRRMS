@@ -171,6 +171,7 @@ class EncoderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'file.*' => 'required|file|max:10240|mimes:pdf',
+            'description.*' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -194,6 +195,7 @@ class EncoderController extends Controller
                 UploadedFile::create([
                     'student_id' => $student->id,
                     'file' => $fileName,
+                    'description' => $request->input('description'),
                 ]);
             }
         }

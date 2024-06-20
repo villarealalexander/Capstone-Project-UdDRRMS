@@ -1,6 +1,6 @@
 <div class="flex justify-center items-center my-5 mx-auto px-4">
     <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden backdrop-blur-sm">
-        <div class="bg-white shadow-lg rounded-lg w-full max-w-4xl p-8 sm:max-w-md md:max-w-sm lg:max-w-lg xl:max-w-md">
+        <div class="bg-white shadow-lg rounded-lg w-full p-8 xl:max-w-md overflow-y-scroll " style="max-height: 620px">
             <div class="flex justify-between items-center bg-white p-1 rounded-t-lg">
                 <h1 class="text-xl sm:text-3xl text-gray-600 font-bold mt-2 sm:mt-0 ml-4">Upload File</h1>
                 <button id="closeModal" class="text-gray-600 hover:text-gray-900 text-lg">&times;</button>
@@ -123,8 +123,8 @@
                     </div>
                 </div>
 
-                <div class="flex justify-start font-medium">
-                    <button type="button" id="addFileButton" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mr-1 rounded-md focus:outline-none focus:ring focus:border-blue-300">Add Another File</button>
+                <div class="flex justify-center font-medium">
+                    <button type="button" id="addFileButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mr-1 rounded-md focus:outline-none focus:ring focus:border-blue-300">Add Another File</button>
                 </div>
 
                 <div class="flex justify-start font-medium mt-4">

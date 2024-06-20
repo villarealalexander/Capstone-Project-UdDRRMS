@@ -8,9 +8,6 @@
     </form>
 
     <script>
-        // Reference link
-        //Implemented a search debounce function similar to 
-        //this link https://www.freecodecamp.org/news/javascript-debounce-example/
         function debounce(func, delay) {
             let timeout;
             return function() {

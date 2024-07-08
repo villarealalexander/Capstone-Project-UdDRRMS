@@ -38,18 +38,18 @@
                     <table class="w-full bg-gray-200 border-2 border-gray-300 rounded-lg shadow-md">
                         <thead class="sticky top-0">
                             <tr class="bg-gray-100">
-                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-center">Description</th>
-                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-center">File</th>
-                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-center">Actions</th>
+                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-left">Description</th>
+                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-left">File</th>
+                                <th class="py-2 px-4 border-b border-gray-300 text-gray-700 text-left">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($files as $file)
                                 <tr>
-                                    <td class="flex justify-center py-4 px-4 border-b border-gray-300">
-                                        <div class="flex items-center">
+                                    <td class="flex justify-left py-4 px-4 border-b border-gray-300">
+                                        <div class="flex items-left">
                                             @if (auth()->user()->role === 'encoder')
-                                                <form action="{{ route('updatedescription', $file->id) }}" method="POST" class="flex items-center">
+                                                <form action="{{ route('updatedescription', $file->id) }}" method="POST" class="flex items-left">
                                                     @csrf
                                                     @method('PUT')
                                                     <input type="text" name="description" value="{{ $file->description }}" class="w-full border-gray-300 border rounded py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -66,12 +66,12 @@
                                         </div>
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-300">
-                                        <div class="flex justify-center items-center">
+                                        <div class="flex justify-left items-left">
                                             <img src="{{ asset('images/pdficon.png') }}" alt="PDF Icon" class="w-9 h-9">
                                             <span class="ml-2 text-lg font-semibold">{{ $file->file }}</span>
                                         </div>
                                     </td>
-                                    <td class="py-2 px-4 border-b border-gray-300 text-center space-y-2">
+                                    <td class="py-2 px-4 border-b border-gray-300 text-left space-y-2">
                                         <a href="{{ route('viewfile', $file->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-lg text-sm mr-2">
                                             <i class="fa-solid fa-file-pdf mr-1"></i>View
                                         </a>
@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden backdrop-blur-sm">
+    <div id="uploadModal" class="fixed inset-0 flex items-left justify-left bg-gray-800 bg-opacity-75 hidden backdrop-blur-sm">
         <div class="bg-white shadow-lg rounded-lg w-full max-w-md p-8 sm:max-w-md md:max-w-sm xl:max-w-md">
             <div class="flex justify-between items-center bg-white p-1 rounded-t-lg">
                 <h1 class="text-xl sm:text-3xl text-gray-600 font-bold mt-2 sm:mt-0 ml-4">Upload File</h1>

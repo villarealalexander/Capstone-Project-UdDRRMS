@@ -152,15 +152,15 @@
     </div>
 
     <div id="checklistModal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-        <div class="flex justify-between items-center mb-4">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+        <div class="mb-4">
             <h2 class="text-xl font-bold" id="checklistModalTitle"></h2>
-            <button class="text-gray-600 hover:text-gray-800 focus:outline-none" onclick="closeChecklistModal()">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
-        <div id="checklistModalContent">
-            
+        <div id="checklistModalContent"></div>
+        <div class="flex justify-end mt-4">
+            <button class="text-gray-600 hover:text-gray-800 focus:outline-none" onclick="closeChecklistModal()">
+                Close <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 </div>

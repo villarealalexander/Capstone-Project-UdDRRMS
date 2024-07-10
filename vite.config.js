@@ -9,12 +9,13 @@ export default defineConfig({
         }),
     ],
 
-    server: {
-        host: '192.168.100.56', // Listen on all network interfaces
-        port: 3000, // Change this to your desired port if needed
-        hmr: {
-            host: '192.168.100.56', // Connect to the specified IP address
-            port:3000,
-    },
-},
+//     server: {
+//         host: '10.10.0.127', 
+//         port: 3000, 
+//         hmr: {
+//             host: '10.10.0.127',
+//             port:3000,
+//     },
+// },
+
 });

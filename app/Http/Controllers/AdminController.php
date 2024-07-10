@@ -53,25 +53,50 @@ class AdminController extends Controller
     }
 
     public function downloadFile($id)
-    {
-        $file = UploadedFile::findOrFail($id);
-        $student = $file->student;
+{
+    $file = UploadedFile::findOrFail($id);
+    $student = $file->student;
 
-        $filePath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file);
+    $fileName = $file->file;
+    $studentFolder = $student->name . '_' . $student->batchyear . '_' . $student->id;
 
-        if (file_exists($filePath)) {
-            $headers = [
-                'Content-Type' => 'application/pdf',
-            ];
-            $response = response()->download($filePath, $file->file, $headers);
-            $response->send();
-            ActivityLogService::log('Download', 'Downloaded a file from: ' . $student->name .' -> (Filename: ' . $file->file . ')');
+    // Check if the file exists in public_path
+    $filePath = public_path('uploads/' . $studentFolder . '/' . $fileName);
 
-            return $response;
-        } else {
+    if (file_exists($filePath)) {
+        $headers = [
+            'Content-Type' => 'application/pdf',
+        ];
+        $response = response()->download($filePath, $fileName, $headers);
+        ActivityLogService::log('Download', 'Downloaded file: ' . $fileName . ' from local storage.');
+
+        return $response;
+    } else {
+        // Initialize Firebase Cloud Storage
+        $storage = app('firebase.storage');
+        $bucket = $storage->getBucket();
+
+        $firebaseFilePath = 'uploads/' . $studentFolder . '/' . $fileName;
+
+        // Check if the file exists on Firebase
+        $object = $bucket->object($firebaseFilePath);
+        if (!$object->exists()) {
             return redirect()->back()->with('error', 'File not found.');
         }
+
+        // Download the file from Firebase to local storage
+        $object->downloadToFile($filePath);
+
+        // Download the file from local storage
+        $headers = [
+            'Content-Type' => 'application/pdf',
+        ];
+        $response = response()->download($filePath, $fileName, $headers);
+        ActivityLogService::log('Download', 'Downloaded file: ' . $fileName . ' from Firebase.');
+
+        return $response;
     }
+}
 
         public function activityLogs()
     {
@@ -85,5 +110,19 @@ class AdminController extends Controller
         ActivityLogService::log('View', 'Viewed Activity Logs');
 
         return view('admin.activitylogs', compact('activityLogs', 'role', 'name'));
+    }
+
+    public function checklist(Request $request)
+    {
+        ActivityLogService::log('View', 'Accessed the checklist page.');
+
+        // Get the student ID from the request
+        $studentId = $request->student_id;
+        
+        // Fetch the student and their uploaded files
+        $student = Student::with('uploadedFiles')->findOrFail($studentId);
+        $files = $student->uploadedFiles;
+
+        return view('admin.checklist', compact('student', 'files'));
     }
 }

@@ -10,7 +10,7 @@ class UploadedFile extends Model
 {
     use SoftDeletes;
     protected $table = 'uploaded_files';
-    protected $fillable = ['student_id', 'file'];
+    protected $fillable = ['student_id', 'file', 'description'];
 
     protected $dates = ['deleted_at']; 
     public function student()

@@ -63,6 +63,28 @@ class EncoderController extends Controller
         return view('encoder.show', compact('student'));
     }
 
+    public function updateDescription(Request $request, UploadedFile $file)
+{
+    $file->update([
+        'description' => $request->description,
+    ]);
+
+    return back()->with('success', 'File description updated successfully.');
+}
+    public function checklist(Request $request)
+    {
+        ActivityLogService::log('View', 'Accessed the checklist page.');
+
+        // Get the student ID from the request
+        $studentId = $request->student_id;
+        
+        // Fetch the student and their uploaded files
+        $student = Student::with('uploadedFiles')->findOrFail($studentId);
+        $files = $student->uploadedFiles;
+
+        return view('encoder.checklist', compact('student', 'files'));
+    }
+
     // Upload file area
     public function uploadfile()
     {
@@ -77,24 +99,25 @@ class EncoderController extends Controller
         'Name' => 'required|string',
         'BatchYear' => 'required|numeric',
         'type_of_student' => 'required|string|in:Undergraduate,Post Graduate',
-        'file.*' => 'required|file|max:10240|mimes:pdf',
+        'files.*' => 'required|file|max:10240|mimes:pdf',
+        'descriptions.*' => 'required|string|max:255', // Adding validation for descriptions
     ]);
 
     if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
 
+    // Initialize Firebase Cloud Storage
+    $storage = app('firebase.storage');
+    $bucket = $storage->getBucket();
+
     $course = null;
     $major = null;
 
-
-        
     if ($request->input('type_of_student') === 'Undergraduate') {
         $course = $request->input('undergradCourses');
-
-        // Set major based on selected course
         if ($course) {
-            $major = $request->input('major'); // Use the selected major from dropdown
+            $major = $request->input('major');
         }
     } elseif ($request->input('type_of_student') === 'Post Graduate') {
         $course = $request->input('postGradDegrees');
@@ -103,83 +126,120 @@ class EncoderController extends Controller
         } elseif ($course === 'Doctorate') {
             $course = $request->input('doctorateCourses');
         }
-        // Set major based on selected course
         if ($course) {
-            $major = $request->input('major'); // Use the selected major from dropdown
+            $major = $request->input('major');
         }
     }
 
-        $currentMonth = date('F');
+    $currentMonth = date('F');
 
-        $student = Student::updateOrCreate([
-            'name' => $request->input('Name'),
-            'batchyear' => $request->input('BatchYear'),
-            'type_of_student' => $request->input('type_of_student'),
-            'course' => $course,
-            'major' => $major, // Store major in the database
-            'month_uploaded' => $currentMonth,
-        ]);
+    $student = Student::updateOrCreate([
+        'name' => $request->input('Name'),
+        'batchyear' => $request->input('BatchYear'),
+        'type_of_student' => $request->input('type_of_student'),
+        'course' => $course,
+        'major' => $major,
+        'month_uploaded' => $currentMonth,
+    ]);
 
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
-                $fileName = $file->getClientOriginalName();
+    if ($request->hasFile('files')) {
+        foreach ($request->file('files') as $index => $file) {
+            $fileName = $file->getClientOriginalName();
+            $description = $request->input('descriptions')[$index] ?? '';
     
-
-                $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
-
-                if (!file_exists($studentFolderPath)) {
-                    mkdir($studentFolderPath, 0755, true);
-                }
-
-                $file->move($studentFolderPath, $fileName);
-
-                UploadedFile::create([
-                    'student_id' => $student->id,
-                    'file' => $fileName,
-                ]);
+            // Create directory for the student if it doesn't exist
+            $studentFolder = $student->name . '_' . $student->batchyear . '_' . $student->id;
+            $publicPath = public_path('uploads/' . $studentFolder);
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0777, true);
             }
+    
+            // Upload file to Firebase Storage
+            $object = $bucket->upload(
+                fopen($file->getPathname(), 'r'),
+                [
+                    'name' => 'uploads/' . $studentFolder . '/' . $fileName,
+                    'metadata' => [
+                        'contentType' => $file->getClientMimeType(),
+                        'customMetadata' => [
+                            'description' => $description,
+                        ],
+                    ],
+                ]
+            );
+    
+            // Save a copy to public_path
+            $file->move($publicPath, $fileName);
+    
+            UploadedFile::create([
+                'student_id' => $student->id,
+                'file' => $fileName,
+                'description' => $description,
+            ]);
         }
-
-        ActivityLogService::log('Upload', 'Uploaded files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
-
-        return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
     }
 
-    public function addFileToStudent(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'file.*' => 'required|file|max:10240|mimes:pdf',
+    ActivityLogService::log('Upload', 'Uploaded files for student: ' . $student->name . ' (ID: ' . $student->id . ')');
+
+    return redirect()->route('encoder.index')->with('success', 'Student information and files uploaded successfully.');
+}
+
+public function addFileToStudent(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'file.*' => 'required|file|max:10240|mimes:pdf',
+        'description.*' => 'required|string|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $student = Student::findOrFail($id);
+
+    // Initialize Firebase Cloud Storage
+    $storage = app('firebase.storage');
+    $bucket = $storage->getBucket();
+
+    foreach ($request->file('file') as $index => $file) {
+        $fileName = $file->getClientOriginalName();
+        $description = $request->input('description')[$index] ?? '';
+
+        // Create directory for the student if it doesn't exist
+        $studentFolder = $student->name . '_' . $student->batchyear . '_' . $student->id;
+        $publicPath = public_path('uploads/' . $studentFolder);
+        if (!file_exists($publicPath)) {
+            mkdir($publicPath, 0777, true);
+        }
+
+        // Upload file to Firebase Storage
+        $object = $bucket->upload(
+            fopen($file->getPathname(), 'r'),
+            [
+                'name' => 'uploads/' . $studentFolder . '/' . $fileName,
+                'metadata' => [
+                    'contentType' => $file->getClientMimeType(),
+                    'customMetadata' => [
+                        'description' => $description,
+                    ],
+                ],
+            ]
+        );
+
+        // Save a copy to public_path
+        $file->move($publicPath, $fileName);
+
+        UploadedFile::create([
+            'student_id' => $student->id,
+            'file' => $fileName,
+            'description' => $description,
         ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $student = Student::findOrFail($id);
-
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
-                $fileName = $file->getClientOriginalName();
-
-                $studentFolderPath = public_path('uploads/' . $student->name . '_' . $student->batchyear . '_' .  $student->id . '/');
-
-                if (!file_exists($studentFolderPath)) {
-                    mkdir($studentFolderPath, 0755, true);
-                }
-
-                $file->move($studentFolderPath, $fileName);
-
-                UploadedFile::create([
-                    'student_id' => $student->id,
-                    'file' => $fileName,
-                ]);
-            }
-        }
-
-        ActivityLogService::log('Add file', 'Added files to student: ' . $student->name . ' (ID: ' . $student->id . ')');
-
-        return redirect()->route('student.files', $id)->with('success', 'File uploaded successfully.');
     }
+
+    ActivityLogService::log('Add file', 'Added files to student: ' . $student->name . ' (ID: ' . $student->id . ')');
+
+    return redirect()->route('student.files', $id)->with('success', 'Files uploaded successfully.');
+}
     // End of upload file area
 
     // View file area
@@ -202,18 +262,45 @@ class EncoderController extends Controller
     }
 
     public function viewFile($id)
+{
+    $file = UploadedFile::findOrFail($id);
+    $student = $file->student;
+
+    // Retrieve the file URL from Firebase Cloud Storage
+    $filePath = 'uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file;
+
+    // You should have a method to retrieve the Firebase URL based on the file metadata
+    $fileUrl = $this->getFirebaseFileUrl($file); // Implement this method
+
+    if ($fileUrl) {
+        ActivityLogService::log('View', 'Viewed file: ' . $file->file . ' for student: ' . $student->name . ' (ID: ' . $student->id . ')');
+
+        return view('viewfile', compact('fileUrl', 'student'));
+    } else {
+        return back()->with('error', 'File not found.');
+    }
+}
+
+private function getFirebaseFileUrl($file)
     {
-        $file = UploadedFile::findOrFail($id);
+        // Initialize Firebase Storage
+        $storage = app('firebase.storage');
+        $bucket = $storage->getBucket();
+
+        // Construct the file path in Firebase Storage
         $student = $file->student;
         $filePath = 'uploads/' . $student->name . '_' . $student->batchyear . '_' . $student->id . '/' . $file->file;
-        $fileUrl = asset($filePath);
 
-        if (file_exists(public_path($filePath))) {
-            ActivityLogService::log('View', 'Viewed file: ' . $file->file . ' for student: ' . $student->name . ' (ID: ' . $student->id . ')');
+        try {
+            // Get the file URL from Firebase Storage
+            $object = $bucket->object($filePath);
+            $url = $object->signedUrl(new \DateTime('tomorrow'));
 
-            return view('viewfile', compact('fileUrl', 'student'));
-        } else {
-            return back()->with('error', 'File not found.');
+            return $url;
+        } catch (\Exception $e) {
+            // Handle any errors, such as file not found
+            \Log::error('Error fetching Firebase URL: ' . $e->getMessage());
+            return null; // Return null or empty string if URL retrieval fails
         }
     }
     // End of view file area
@@ -231,37 +318,6 @@ class EncoderController extends Controller
 
         return view('encoder.confirm-student-delete', compact('selectedStudentIds'));
     }
-
-    public function deleteFilePermanently($id)
-    {
-        $file = UploadedFile::withTrashed()->findOrFail($id);
-
-        $filePath = public_path('uploads/' . $file->student->name . '_' . $file->student->batchyear . '_' . $file->student->id . '/' . $file->file);
-
-        if ($file->trashed()) {
-            $file->forceDelete();
-            unlink($filePath);
-        }
-
-        $file->forceDelete();
-
-        ActivityLogService::log('Delete', 'Permanently deleted file: ' . $file->file . ' (ID: ' . $file->id . ') for student: ' . $file->student->name);
-
-        return redirect()->back()->with('success', 'File deleted permanently.');
-    }
-
-    public function permanentDeleteStudent($id)
-{
-    $student = Student::withTrashed()->find($id);
-
-    if ($student) {
-        $student->forceDelete();
-        return redirect()->route('encoder.index')->with('success', 'Student permanently deleted successfully.');
-    } else {
-        return redirect()->route('encoder.index')->with('error', 'Student not found.');
-    }
-}
-
 
     public function deleteFile($id)
     {

@@ -1,6 +1,6 @@
 <div class="flex justify-center items-center my-5 mx-auto px-4">
     <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden backdrop-blur-sm">
-        <div class="bg-white shadow-lg rounded-lg w-full max-w-4xl p-8 sm:max-w-md md:max-w-sm lg:max-w-lg xl:max-w-md">
+        <div class="bg-white shadow-lg rounded-lg w-full p-8 xl:max-w-md overflow-y-scroll " style="max-height: 620px">
             <div class="flex justify-between items-center bg-white p-1 rounded-t-lg">
                 <h1 class="text-xl sm:text-3xl text-gray-600 font-bold mt-2 sm:mt-0 ml-4">Upload File</h1>
                 <button id="closeModal" class="text-gray-600 hover:text-gray-900 text-lg">&times;</button>
@@ -114,15 +114,20 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="file" class="block text-gray-700 text-sm sm:text-base">Choose File:</label>
-                    <input type="file" name="file[]" id="file" class="form-input w-full focus:outline-blue-400" multiple>
-                    @error('file')
-                    <div class="text-red-600 mt-1 text-sm">{{ $message }}</div>
-                    @enderror
+                <div id="fileInputsContainer" class="mb-4">
+                    <div class="file-input-group mb-2">
+                        <label for="file_0" class="block text-gray-700 text-sm sm:text-base">Choose File:</label>
+                        <input type="file" name="files[]" id="file_0" class="form-input w-full focus:outline-blue-400" onchange="handleFileChange(this, 0)">
+                        <label for="description_0" class="block text-gray-700 text-sm sm:text-base mt-2">Description:</label>
+                        <input type="text" name="descriptions[]" id="description_0" placeholder="Enter description" class="border-2 border-gray-500 p-1 focus:outline-blue-400 rounded-md form-input w-full">
+                    </div>
                 </div>
 
-                <div class="flex justify-start font-medium">
+                <div class="flex justify-center font-medium">
+                    <button type="button" id="addFileButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mr-1 rounded-md focus:outline-none focus:ring focus:border-blue-300">Add Another File</button>
+                </div>
+
+                <div class="flex justify-start font-medium mt-4">
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 mr-1 rounded-md focus:outline-none focus:ring focus:border-green-300">Submit</button>
                     <button type="button" id="cancelModal" class="hover:underline text-blue-500 py-2 px-4 rounded-md focus:outline-none">Cancel</button>
                 </div>
@@ -133,96 +138,143 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const typeOfStudentSelect = document.getElementById('type_of_student');
-        const undergradCoursesDropdown = document.getElementById('undergradCoursesDropdown');
-        const postGradDegreeDropdown = document.getElementById('postGradDegreeDropdown');
-        const mastersCoursesDropdown = document.getElementById('mastersCoursesDropdown');
-        const doctorateCoursesDropdown = document.getElementById('doctorateCoursesDropdown');
-        const majorDropdown = document.getElementById('majorDropdown');
-        
-        const modal = document.getElementById('uploadModal');
-        const openModalButton = document.getElementById('openModal');
-        const closeModalButton = document.getElementById('closeModal');
-        const cancelModalButton = document.getElementById('cancelModal');
-        
-        openModalButton.addEventListener('click', function () {
-            modal.classList.remove('hidden');
-        });
-        
-        closeModalButton.addEventListener('click', function () {
+    const typeOfStudentSelect = document.getElementById('type_of_student');
+    const undergradCoursesDropdown = document.getElementById('undergradCoursesDropdown');
+    const postGradDegreeDropdown = document.getElementById('postGradDegreeDropdown');
+    const mastersCoursesDropdown = document.getElementById('mastersCoursesDropdown');
+    const doctorateCoursesDropdown = document.getElementById('doctorateCoursesDropdown');
+    const majorDropdown = document.getElementById('majorDropdown');
+    
+    const modal = document.getElementById('uploadModal');
+    const openModalButton = document.getElementById('openModal');
+    const closeModalButton = document.getElementById('closeModal');
+    const cancelModalButton = document.getElementById('cancelModal');
+    
+    const fileInputsContainer = document.getElementById('fileInputsContainer');
+    const addFileButton = document.getElementById('addFileButton');
+    let fileInputCount = 1;
+
+    openModalButton.addEventListener('click', function () {
+        modal.classList.remove('hidden');
+    });
+
+    closeModalButton.addEventListener('click', function () {
+        modal.classList.add('hidden');
+    });
+
+    cancelModalButton.addEventListener('click', function () {
+        modal.classList.add('hidden');
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target == modal) {
             modal.classList.add('hidden');
-        });
-        
-        cancelModalButton.addEventListener('click', function () {
-            modal.classList.add('hidden');
-        });
-        
-        window.addEventListener('click', function (event) {
-            if (event.target == modal) {
-                modal.classList.add('hidden');
-            }
-        });
-
-        typeOfStudentSelect.addEventListener('change', function () {
-            const selectedType = typeOfStudentSelect.value;
-            
-            undergradCoursesDropdown.classList.add('hidden');
-            postGradDegreeDropdown.classList.add('hidden');
-            mastersCoursesDropdown.classList.add('hidden');
-            doctorateCoursesDropdown.classList.add('hidden');
-            majorDropdown.classList.add('hidden');
-
-            if (selectedType === 'Undergraduate') {
-                undergradCoursesDropdown.classList.remove('hidden');
-            } else if (selectedType === 'Post Graduate') {
-                postGradDegreeDropdown.classList.remove('hidden');
-            }
-        });
-
-        const postGradDegreeSelect = document.getElementById('postGradDegrees');
-        postGradDegreeSelect.addEventListener('change', function () {
-            const selectedDegree = postGradDegreeSelect.value;
-
-            mastersCoursesDropdown.classList.add('hidden');
-            doctorateCoursesDropdown.classList.add('hidden');
-            majorDropdown.classList.add('hidden');
-
-            if (selectedDegree === 'Masters') {
-                mastersCoursesDropdown.classList.remove('hidden');
-            } else if (selectedDegree === 'Doctorate') {
-                doctorateCoursesDropdown.classList.remove('hidden');
-            }
-        });
-
-        const undergradCoursesSelect = document.getElementById('undergradCourses');
-        undergradCoursesSelect.addEventListener('change', function () {
-            const selectedCourse = undergradCoursesSelect.value;
-
-            majorDropdown.classList.add('hidden');
-
-            const courseMajorMap = {
-                'BS IN BUSINESS ADMINISTRATION': ['Financial Management', 'Marketing Management'],
-                'BACHELOR OF SECONDARY EDUCATION': ['Filipino', 'Math', 'English']
-            };
-
-            if (courseMajorMap[selectedCourse]) {
-                populateMajorDropdown(courseMajorMap[selectedCourse]);
-            }
-        });
-
-        function populateMajorDropdown(options) {
-            const majorSelect = document.getElementById('major');
-            majorSelect.innerHTML = "";
-
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option;
-                optionElement.textContent = option;
-                majorSelect.appendChild(optionElement);
-            });
-
-            majorDropdown.classList.remove('hidden');
         }
     });
+
+    typeOfStudentSelect.addEventListener('change', function () {
+        const selectedType = typeOfStudentSelect.value;
+        
+        undergradCoursesDropdown.classList.add('hidden');
+        postGradDegreeDropdown.classList.add('hidden');
+        mastersCoursesDropdown.classList.add('hidden');
+        doctorateCoursesDropdown.classList.add('hidden');
+        majorDropdown.classList.add('hidden');
+
+        if (selectedType === 'Undergraduate') {
+            undergradCoursesDropdown.classList.remove('hidden');
+        } else if (selectedType === 'Post Graduate') {
+            postGradDegreeDropdown.classList.remove('hidden');
+        }
+    });
+
+    const postGradDegreeSelect = document.getElementById('postGradDegrees');
+    postGradDegreeSelect.addEventListener('change', function () {
+        const selectedDegree = postGradDegreeSelect.value;
+
+        mastersCoursesDropdown.classList.add('hidden');
+        doctorateCoursesDropdown.classList.add('hidden');
+        majorDropdown.classList.add('hidden');
+
+        if (selectedDegree === 'Masters') {
+            mastersCoursesDropdown.classList.remove('hidden');
+        } else if (selectedDegree === 'Doctorate') {
+            doctorateCoursesDropdown.classList.remove('hidden');
+        }
+    });
+
+    const undergradCoursesSelect = document.getElementById('undergradCourses');
+    undergradCoursesSelect.addEventListener('change', function () {
+        const selectedCourse = undergradCoursesSelect.value;
+
+        majorDropdown.classList.add('hidden');
+
+        const courseMajorMap = {
+            'BS IN BUSINESS ADMINISTRATION': ['Financial Management', 'Marketing Management'],
+            'BACHELOR OF SECONDARY EDUCATION': ['Filipino', 'Math', 'English']
+        };
+
+        if (courseMajorMap[selectedCourse]) {
+            populateMajorDropdown(courseMajorMap[selectedCourse]);
+        }
+    });
+
+    function populateMajorDropdown(options) {
+        const majorSelect = document.getElementById('major');
+        majorSelect.innerHTML = "";
+
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            optionElement.textContent = option;
+            majorSelect.appendChild(optionElement);
+        });
+
+        majorDropdown.classList.remove('hidden');
+    }
+
+    addFileButton.addEventListener('click', function () {
+        const fileInputGroup = document.createElement('div');
+        fileInputGroup.classList.add('file-input-group', 'mb-2');
+
+        const fileLabel = document.createElement('label');
+        fileLabel.setAttribute('for', `file_${fileInputCount}`);
+        fileLabel.classList.add('block', 'text-gray-700', 'text-sm', 'sm:text-base');
+        fileLabel.textContent = 'Choose File:';
+
+        const fileInput = document.createElement('input');
+        fileInput.setAttribute('type', 'file');
+        fileInput.setAttribute('name', 'files[]');
+        fileInput.setAttribute('id', `file_${fileInputCount}`);
+        fileInput.classList.add('form-input', 'w-full', 'focus:outline-blue-400');
+        fileInput.setAttribute('onchange', `handleFileChange(this, ${fileInputCount})`);
+
+        const descriptionLabel = document.createElement('label');
+        descriptionLabel.setAttribute('for', `description_${fileInputCount}`);
+        descriptionLabel.classList.add('block', 'text-gray-700', 'text-sm', 'sm:text-base', 'mt-2');
+        descriptionLabel.textContent = 'Description:';
+
+        const descriptionInput = document.createElement('input');
+        descriptionInput.setAttribute('type', 'text');
+        descriptionInput.setAttribute('name', 'descriptions[]');
+        descriptionInput.setAttribute('id', `description_${fileInputCount}`);
+        descriptionInput.setAttribute('placeholder', 'Enter description');
+        descriptionInput.classList.add('border-2', 'border-gray-500', 'p-1', 'focus:outline-blue-400', 'rounded-md', 'form-input', 'w-full');
+
+        fileInputGroup.appendChild(fileLabel);
+        fileInputGroup.appendChild(fileInput);
+        fileInputGroup.appendChild(descriptionLabel);
+        fileInputGroup.appendChild(descriptionInput);
+
+        fileInputsContainer.appendChild(fileInputGroup);
+
+        fileInputCount++;
+    });
+});
+
+function handleFileChange(input, index) {
+    // Additional logic can be added here if needed when a file is chosen.
+}
+
 </script>
 

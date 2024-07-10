@@ -43,7 +43,7 @@ Route::middleware(['auth', 'CheckRole:admin'])->group(function () {
     Route::get('/admin/activitylogs', [AdminController::class, 'activityLogs'])->name('admin.activitylogs');
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin');
     Route::get('download-file/{id}', [AdminController::class, 'downloadFile'])->name('downloadfile');
-
+    Route::get('/admin/checklist', [AdminController::class, 'checklist'])->name('admin.checklist');
     Route::resource('admin', AdminController::class)->middleware(['auth', 'verified']);
 });
 
@@ -54,7 +54,9 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
     Route::get('/encoder/upload', [EncoderController::class, 'uploadfile'])->name('encoder.upload');
     Route::post('/uploadfile', [EncoderController::class, 'store'])->name('uploadfile.store');
     Route::post('/student/{id}/uploadfile', [EncoderController::class, 'addFileToStudent'])->name('student.addfile');
-    
+    Route::get('/encoder/checklist', [EncoderController::class, 'checklist'])->name('encoder.checklist');
+    Route::put('/encoder/updatedescription/{file}', [EncoderController::class, 'updateDescription'])->name('updatedescription');
+
     Route::delete('/deletefile/{id}', [EncoderController::class, 'deleteFile'])->name('deletefile'); //PDF files
     Route::delete('/deletefilePermanently/{id}', [EncoderController::class, 'deleteFilePermanently'])->name('deletefilePermanently');
     Route::delete('/encoder/permanent-delete/{id}', [EncoderController::class, 'permanentDeleteStudent'])->name('encoder.permanentDeleteStudent');
@@ -73,7 +75,7 @@ Route::middleware(['auth', 'CheckRole:encoder'])->group(function () {
 
 Route::middleware(['auth', 'CheckRole:viewer'])->group(function () {
     Route::get('/viewer/index', [ViewerController::class, 'index'])->name('viewer');
-    
+    Route::get('/viewer/checklist', [ViewerController::class, 'checklist'])->name('viewer.checklist');
     Route::resource('viewer', ViewerController::class)->middleware(['auth', 'verified']);
 });
 
@@ -83,6 +85,7 @@ Route::middleware(['auth', 'CheckRole:encoder,viewer,admin'])->group(function ()
     Route::get('/viewfile/{id}', [EncoderController::class, 'viewFile'])->name('viewfile');
     Route::get('/student/{id}/files', [EncoderController::class, 'studentFiles'])->name('student.files');
 });
+
 
 
 

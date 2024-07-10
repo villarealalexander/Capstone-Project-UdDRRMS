@@ -44,12 +44,6 @@
                                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
                                         <i class="fa-solid fa-trash-can-arrow-up mr-1"></i>Restore</button>
                                     </form>
-                                    <form action="{{ route('deletefilePermanently', $file->id) }}" method="POST" class="inline ml-2">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-600 py-1 px-2 text-white font-semibold rounded-lg text-sm">
-                                    <i class="fa-regular fa-circle-xmark mr-1"></i>Delete Permanently</button>
-                                </form>
                                 </td>
                             </tr>
                             @endforeach
